@@ -16,16 +16,32 @@ document.body.appendChild( renderer.domElement );
 
 const geometry = new THREE.BoxGeometry(1,1,1);
 const material = new THREE.MeshBasicMaterial({
-    color: 0x00ff00
+    color: new THREE.Color(0,255,0)
 });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
-camera.position.z = 5;
+const lineMaterial = new THREE.LineBasicMaterial({
+    color: new THREE.Color(255,0,0)
+});
+const points = [];
+points.push(new THREE.Vector3(-10,  0, 0));
+points.push(new THREE.Vector3(  0, 10, 0));
+points.push(new THREE.Vector3( 10,  0, 0));
+const lineGeometry = new THREE.BufferGeometry()
+    .setFromPoints(points);
+const line = new THREE.Line(lineGeometry, lineMaterial);
+scene.add(line);
+
+camera.position.z = 15;
 
 function animate(time: number) {
     cube.rotation.x = time / 2000;
     cube.rotation.y = time / 1000;
+
+    line.rotation.x = time / 2000;
+    line.rotation.y = time / 1000;
+    
     renderer.render( scene, camera);
 }
 
