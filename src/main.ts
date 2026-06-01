@@ -14,38 +14,38 @@ renderer.setSize(
 
 document.body.appendChild( renderer.domElement );
 
-
-
-// const boxGeometry = new THREE.BoxGeometry(3,3,3);
-// const material = new THREE.MeshNormalMaterial();
-// const cube = new THREE.Mesh(boxGeometry, material);
-// scene.add(cube);
-
-// const directionalLight = new THREE.DirectionalLight(
-//     new THREE.Color(255,255,255),
-//     0.1);
-// directionalLight.position.set(2,2,8);
-// scene.add(directionalLight);
-
-// const ambientLight = new THREE.AmbientLight(
-//     new THREE.Color(255,255,255),
-//     .001);
-// scene.add(ambientLight);
-
 const lineMaterial = new THREE.LineBasicMaterial({
     color: new THREE.Color(255,0,0)
 });
-const points = [];
 
-function spiralPoint(theta: number): THREE.Vector3 {
-    const radius = 3;
+function spiralLineGeometry(
+    shift: THREE.Vector3 = new THREE.Vector3()
+) {
+    const points = [];
+    for (let i=0; i<6; i+=.01) {
+        points.push(spiralPoint(i, shift));
+    }
+
+    return new THREE.BufferGeometry()
+        .setFromPoints(points);
+}
+
+function spiralPoint(
+    theta: number,
+    shift: THREE.Vector3 = new THREE.Vector3()
+): THREE.Vector3 {
+    const radius = 5;
     const tube = 1;
-    const freq = 10;
+    const freq = 5;
 
-    return new THREE.Vector3(tube, 0, 0)
+    const tubeShift = shift.x;
+    const phiShift = shift.y;
+    const thetaShift = shift.z;
+
+    return new THREE.Vector3(tube + tubeShift, 0, 0)
         .applyAxisAngle(
             new THREE.Vector3(0, 0, 1),
-            theta * freq)
+            (theta * freq) + phiShift)
         .applyAxisAngle(
             new THREE.Vector3(1, 0, 0),
             Math.PI / 2)
@@ -53,27 +53,34 @@ function spiralPoint(theta: number): THREE.Vector3 {
             new THREE.Vector3(radius, 0, 0))
         .applyAxisAngle(
             new THREE.Vector3(0, 0, 1),
-            theta);
+            theta + thetaShift);
 }
 
-for (let i=0; i<6; i+=.01) {
-    points.push(spiralPoint(i));
+const shifts = [
+    new THREE.Vector3(0, 0, 0),
+    new THREE.Vector3(0, 0, .2),
+    new THREE.Vector3(.1, 0, .2),
+    new THREE.Vector3(.1, 0, 0),
+
+    new THREE.Vector3(0, Math.PI/2, 0),
+    new THREE.Vector3(0, Math.PI/2, .2),
+    new THREE.Vector3(.1, Math.PI/2, .2),
+    new THREE.Vector3(.1, Math.PI/2, 0),
+];
+
+const spiralGroup = new THREE.Group();
+for (const shift of shifts) {
+    spiralGroup.add(new THREE.Line(spiralLineGeometry(shift), lineMaterial))
 }
-const lineGeometry = new THREE.BufferGeometry()
-    .setFromPoints(points);
-const line = new THREE.Line(lineGeometry, lineMaterial);
-scene.add(line);
+scene.add(spiralGroup);
 
 camera.position.z = 15;
 
 function animate(time: number) {
-    // cube.rotation.x = time / 2000;
-    // cube.rotation.y = time / 1000;
-
-    line.rotation.x = time / 2000;
-    line.rotation.y = time / 1000;
+    spiralGroup.rotation.x = time / 2000;
+    spiralGroup.rotation.y = time / 1000;
     
-    renderer.render( scene, camera);
+    renderer.render(scene, camera);
 }
 
 renderer.setAnimationLoop(animate);
