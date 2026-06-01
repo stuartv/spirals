@@ -19,7 +19,8 @@ const lineMaterial = new THREE.LineBasicMaterial({
 });
 
 function quadStrip(
-    points: THREE.Vector3[]
+    points: THREE.Vector3[],
+    normals: THREE.Vector3[]
 ): THREE.BufferGeometry {
     const geometry = new THREE.BufferGeometry();
     const numbersPerElement = 3;
@@ -29,6 +30,10 @@ function quadStrip(
             new Float32Array(points.flatMap(point => point.toArray())),
             numbersPerElement));
 
+    geometry.setAttribute('normal',
+        new THREE.BufferAttribute(
+            new Float32Array(normals.flatMap(normal => normal.toArray())),
+            numbersPerElement));
 
     const numQuads = (points.length / 2) - 1;
     const indexes: number[] = [];
@@ -39,21 +44,28 @@ function quadStrip(
     }
     geometry.setIndex(indexes);
 
-    geometry.computeVertexNormals();
-
     return geometry;
 }
 
 function stripTop(): THREE.BufferGeometry {
     const shift1 = new THREE.Vector3(0, 0, 0);
     const shift2 = new THREE.Vector3(0, 0, .2);
+
+    const tubeShift = new THREE.Vector3(1, 0, 0);
+
     const points = [];
+    const normals: THREE.Vector3[] = [];
     for (let i=0; i<6; i+=.01) {
-        points.push(spiralPoint(i, shift1));
-        points.push(spiralPoint(i, shift2));
+        const pt1 = spiralPoint(i, shift1)
+        const pt2 = spiralPoint(i, shift2);
+        points.push(pt1);
+        points.push(pt2);
+
+        normals.push(spiralPoint(i, shift1.clone().add(tubeShift)).sub(pt1));
+        normals.push(spiralPoint(i, shift2.clone().add(tubeShift)).sub(pt2));
     }
 
-    return quadStrip(points);
+    return quadStrip(points, normals);
 }
 
 function spiralLineGeometry(
