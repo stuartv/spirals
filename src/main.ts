@@ -18,6 +18,44 @@ const lineMaterial = new THREE.LineBasicMaterial({
     color: new THREE.Color(255,0,0)
 });
 
+function quadStrip(
+    points: THREE.Vector3[]
+): THREE.BufferGeometry {
+    const geometry = new THREE.BufferGeometry();
+    const numbersPerElement = 3;
+
+    geometry.setAttribute('position',
+        new THREE.BufferAttribute(
+            new Float32Array(points.flatMap(point => point.toArray())),
+            numbersPerElement));
+
+
+    const numQuads = (points.length / 2) - 1;
+    const indexes: number[] = [];
+    for (let i=0; i<numQuads; i++) {
+        indexes.push(
+            i+0, i+2, i+1,
+            i+1, i+2, i+3);
+    }
+    geometry.setIndex(indexes);
+
+    geometry.computeVertexNormals();
+
+    return geometry;
+}
+
+function stripTop(): THREE.BufferGeometry {
+    const shift1 = new THREE.Vector3(0, 0, 0);
+    const shift2 = new THREE.Vector3(0, 0, .2);
+    const points = [];
+    for (let i=0; i<6; i+=.01) {
+        points.push(spiralPoint(i, shift1));
+        points.push(spiralPoint(i, shift2));
+    }
+
+    return quadStrip(points);
+}
+
 function spiralLineGeometry(
     shift: THREE.Vector3 = new THREE.Vector3()
 ) {
@@ -68,6 +106,12 @@ const shifts = [
     new THREE.Vector3(.1, Math.PI/2, 0),
 ];
 
+const spiralMesh = new THREE.Mesh(
+    stripTop(),
+    new THREE.MeshNormalMaterial());
+scene.add(spiralMesh);
+
+
 const spiralGroup = new THREE.Group();
 for (const shift of shifts) {
     spiralGroup.add(new THREE.Line(spiralLineGeometry(shift), lineMaterial))
@@ -79,6 +123,9 @@ camera.position.z = 15;
 function animate(time: number) {
     spiralGroup.rotation.x = time / 2000;
     spiralGroup.rotation.y = time / 1000;
+
+    spiralMesh.rotation.x = time / 2000;
+    spiralMesh.rotation.y = time / 1000;
     
     renderer.render(scene, camera);
 }
