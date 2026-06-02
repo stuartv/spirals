@@ -43,8 +43,11 @@ function strip(
     shift1: THREE.Vector3,
     shift2: THREE.Vector3,
 ): THREE.BufferGeometry {
+    const revolutions = 1.5;
+    const fidelity = .05;
+
     const points = [];
-    for (let i=0; i<Math.PI*3; i+=.1) {
+    for (let i=0; i<Math.PI*2 * revolutions; i+=fidelity) {
         const pt1 = spiralPoint(i, shift1)
         const pt2 = spiralPoint(i, shift2);
         points.push(pt1);
