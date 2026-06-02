@@ -14,13 +14,8 @@ renderer.setSize(
 
 document.body.appendChild( renderer.domElement );
 
-const lineMaterial = new THREE.LineBasicMaterial({
-    color: new THREE.Color(255,0,0)
-});
-
 function quadStrip(
-    points: THREE.Vector3[],
-    normals: THREE.Vector3[]
+    points: THREE.Vector3[]
 ): THREE.BufferGeometry {
     const geometry = new THREE.BufferGeometry();
     const numbersPerElement = 3;
@@ -28,11 +23,6 @@ function quadStrip(
     geometry.setAttribute('position',
         new THREE.BufferAttribute(
             new Float32Array(points.flatMap(point => point.toArray())),
-            numbersPerElement));
-
-    geometry.setAttribute('normal',
-        new THREE.BufferAttribute(
-            new Float32Array(normals.flatMap(normal => normal.toArray())),
             numbersPerElement));
 
     const numQuads = (points.length / 2) - 1;
@@ -44,41 +34,24 @@ function quadStrip(
     }
     geometry.setIndex(indexes);
 
+    geometry.computeVertexNormals();
+
     return geometry;
 }
 
-function stripTop(): THREE.BufferGeometry {
-    const shift1 = new THREE.Vector3(0, 0, 0);
-    const shift2 = new THREE.Vector3(0, 0, .2);
-
-    const tubeShift = new THREE.Vector3(1, 0, 0);
-
+function strip(
+    shift1: THREE.Vector3,
+    shift2: THREE.Vector3,
+): THREE.BufferGeometry {
     const points = [];
-    const normals: THREE.Vector3[] = [];
-
     for (let i=0; i<Math.PI*2; i+=.1) {
         const pt1 = spiralPoint(i, shift1)
         const pt2 = spiralPoint(i, shift2);
         points.push(pt1);
         points.push(pt2);
-
-        normals.push(spiralPoint(i, shift1.clone().add(tubeShift)).sub(pt1));
-        normals.push(spiralPoint(i, shift2.clone().add(tubeShift)).sub(pt2));
     }
 
-    return quadStrip(points, normals);
-}
-
-function spiralLineGeometry(
-    shift: THREE.Vector3 = new THREE.Vector3()
-) {
-    const points = [];
-    for (let i=0; i<Math.PI*2; i+=.01) {
-        points.push(spiralPoint(i, shift));
-    }
-
-    return new THREE.BufferGeometry()
-        .setFromPoints(points);
+    return quadStrip(points);
 }
 
 function spiralPoint(
@@ -86,8 +59,8 @@ function spiralPoint(
     shift: THREE.Vector3 = new THREE.Vector3()
 ): THREE.Vector3 {
     const radius = 5;
-    const tube = 1;
-    const freq = 5;
+    const tube = 1.5;
+    const freq = 4;
 
     const tubeShift = shift.x;
     const phiShift = shift.y;
@@ -110,38 +83,38 @@ function spiralPoint(
             theta + thetaShift);
 }
 
-const shifts = [
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(0, 0, .2),
-    new THREE.Vector3(.1, 0, .2),
-    new THREE.Vector3(.1, 0, 0),
+const stripGroup = new THREE.Group();
 
-    new THREE.Vector3(0, Math.PI/2, 0),
-    new THREE.Vector3(0, Math.PI/2, .2),
-    new THREE.Vector3(.1, Math.PI/2, .2),
-    new THREE.Vector3(.1, Math.PI/2, 0),
+const stripWidth = .2;
+const stripThickness = .4;
+const stripShifts = [
+    new THREE.Vector3(             0, 0,          0),
+    new THREE.Vector3(             0, 0, stripWidth),
+    new THREE.Vector3(stripThickness, 0, stripWidth),
+    new THREE.Vector3(stripThickness, 0,          0)
 ];
 
-const spiralMesh = new THREE.Mesh(
-    stripTop(),
-    new THREE.MeshNormalMaterial());
-scene.add(spiralMesh);
-
-
-const spiralGroup = new THREE.Group();
-for (const shift of shifts) {
-    spiralGroup.add(new THREE.Line(spiralLineGeometry(shift), lineMaterial))
+const numStrips = 4;
+for (let stripIndex=0; stripIndex<numStrips; stripIndex++) {
+    const phiShift = Math.PI*2 / numStrips * stripIndex;
+    for (let j=0; j<stripShifts.length; j++){
+        stripGroup.add(new THREE.Mesh(
+            strip(
+                new THREE.Vector3(0, phiShift, 0)
+                    .add(stripShifts[j]!),
+                new THREE.Vector3(0, phiShift, 0)
+                    .add(stripShifts[(j+1) % stripShifts.length]!)),
+            new THREE.MeshNormalMaterial()));
+    }
 }
-scene.add(spiralGroup);
+
+scene.add(stripGroup);
 
 camera.position.z = 15;
 
 function animate(time: number) {
-    spiralGroup.rotation.x = time / 2000;
-    spiralGroup.rotation.y = time / 1000;
-
-    spiralMesh.rotation.x = time / 2000;
-    spiralMesh.rotation.y = time / 1000;
+    stripGroup.rotation.x = time / 2000;
+    stripGroup.rotation.y = time / 1000;
     
     renderer.render(scene, camera);
 }
