@@ -37,7 +37,7 @@ function quadStrip(
 
     const numQuads = (points.length / 2) - 1;
     const indexes: number[] = [];
-    for (let i=0; i<numQuads; i++) {
+    for (let i=0; i<numQuads*2; i+=2) {
         indexes.push(
             i+0, i+2, i+1,
             i+1, i+2, i+3);
@@ -55,7 +55,8 @@ function stripTop(): THREE.BufferGeometry {
 
     const points = [];
     const normals: THREE.Vector3[] = [];
-    for (let i=0; i<6; i+=.01) {
+
+    for (let i=0; i<Math.PI*2; i+=.1) {
         const pt1 = spiralPoint(i, shift1)
         const pt2 = spiralPoint(i, shift2);
         points.push(pt1);
@@ -72,7 +73,7 @@ function spiralLineGeometry(
     shift: THREE.Vector3 = new THREE.Vector3()
 ) {
     const points = [];
-    for (let i=0; i<6; i+=.01) {
+    for (let i=0; i<Math.PI*2; i+=.01) {
         points.push(spiralPoint(i, shift));
     }
 
@@ -92,17 +93,20 @@ function spiralPoint(
     const phiShift = shift.y;
     const thetaShift = shift.z;
 
+    const xAxis = new THREE.Vector3(1, 0, 0);
+    const zAxis = new THREE.Vector3(0, 0, 1);
+
     return new THREE.Vector3(tube + tubeShift, 0, 0)
         .applyAxisAngle(
-            new THREE.Vector3(0, 0, 1),
+            zAxis,
             (theta * freq) + phiShift)
         .applyAxisAngle(
-            new THREE.Vector3(1, 0, 0),
+            xAxis,
             Math.PI / 2)
         .add(
             new THREE.Vector3(radius, 0, 0))
         .applyAxisAngle(
-            new THREE.Vector3(0, 0, 1),
+            zAxis,
             theta + thetaShift);
 }
 
