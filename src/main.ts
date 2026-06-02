@@ -44,7 +44,7 @@ function strip(
     shift2: THREE.Vector3,
 ): THREE.BufferGeometry {
     const points = [];
-    for (let i=0; i<Math.PI*2; i+=.1) {
+    for (let i=0; i<Math.PI*3; i+=.1) {
         const pt1 = spiralPoint(i, shift1)
         const pt2 = spiralPoint(i, shift2);
         points.push(pt1);
@@ -59,8 +59,11 @@ function spiralPoint(
     shift: THREE.Vector3 = new THREE.Vector3()
 ): THREE.Vector3 {
     const radius = 5;
-    const tube = 1.5;
+    const maxTube = 3;
     const freq = 4;
+
+    // shrink factor
+    const tube = maxTube - (.35 * theta);
 
     const tubeShift = shift.x;
     const phiShift = shift.y;
