@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
 import stripVertexShader from './shaders/wideStrip.vert?raw';
 import stripFragmentShader from './shaders/wideStrip.frag?raw';
 
@@ -15,6 +17,7 @@ renderer.setSize(
     window.innerHeight);
 
 document.body.appendChild( renderer.domElement );
+const controls = new OrbitControls( camera, renderer.domElement );
 
 function quadStrip(
     points: THREE.Vector3[]
@@ -135,11 +138,9 @@ scene.background =new THREE.Color(1,0,0);
 
 
 camera.position.z = 15 ;
+controls.update();
 
 function animate(time: number) {
-    stripGroup.rotation.x = time / 2000;
-    stripGroup.rotation.y = time / 1000;
-    
     renderer.render(scene, camera);
 }
 
