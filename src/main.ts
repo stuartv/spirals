@@ -116,7 +116,7 @@ for (let stripIndex=0; stripIndex<numStrips; stripIndex++) {
 
 scene.add(stripGroup);
 
-camera.position.z = 15;
+camera.position.z = 15 ;
 
 function animate(time: number) {
     stripGroup.rotation.x = time / 2000;
@@ -127,4 +127,33 @@ function animate(time: number) {
 
 renderer.setAnimationLoop(animate);
 
+/*
+// Assuming 'cart' is your vec3(x, y, z)
+float r = length(cart);
+float theta = atan(cart.y, cart.x); // Azimuth
+float phi = acos(cart.z / r);       // Polar / Zenith
+
+vec2 uv = vec2(
+    theta / (2.0 * PI), // Normalize to [0, 1]
+    phi / PI            // Normalize to [0, 1]
+);
+
+void main() {
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
     
+    float color = 0.0;
+    float gridXFreq = 1.0 / 40.0;
+    float gridYFreq = 1.0 / 30.0;
+    float gridXWidth = .02 * sin(st.x * PI);
+    float gridYWidth = .03 * sin(st.y * PI);
+    
+    if (mod(st.x, gridXFreq) < gridXWidth){
+        color = 1.0;
+    } else if (mod(st.y, gridYFreq) < gridYWidth){
+        color = 1.0;
+    }
+
+    gl_FragColor = vec4(color, color, color,1.0);
+}
+
+*/
