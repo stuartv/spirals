@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-import stripVertexShader from './shaders/wideStrip.vert?raw';
-import stripFragmentShader from './shaders/wideStrip.frag?raw';
+import wideStripVertexShader from './shaders/wideStrip.vert?raw';
+import wideStripFragmentShader from './shaders/wideStrip.frag?raw';
+import thinStripFragmentShader from './shaders/thinStrip.frag?raw';
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
@@ -20,7 +21,8 @@ document.body.appendChild( renderer.domElement );
 const controls = new OrbitControls( camera, renderer.domElement );
 
 function quadStrip(
-    points: THREE.Vector3[]
+    points: THREE.Vector3[],
+    normals: THREE.Vector3[]
 ): THREE.BufferGeometry {
     const geometry = new THREE.BufferGeometry();
     const numbersPerElement = 3;
@@ -28,6 +30,11 @@ function quadStrip(
     geometry.setAttribute('position',
         new THREE.BufferAttribute(
             new Float32Array(points.flatMap(point => point.toArray())),
+            numbersPerElement));
+
+    geometry.setAttribute('normal',
+        new THREE.BufferAttribute(
+            new Float32Array(normals.flatMap(normal => normal.toArray())),
             numbersPerElement));
 
     const numQuads = (points.length / 2) - 1;
@@ -39,7 +46,7 @@ function quadStrip(
     }
     geometry.setIndex(indexes);
 
-    geometry.computeVertexNormals();
+    // geometry.computeVertexNormals();
 
     return geometry;
 }
@@ -51,15 +58,21 @@ function strip(
     const revolutions = 1.5;
     const fidelity = .05;
 
+    const tubeShift = new THREE.Vector3(1, 0, 0);
+
     const points = [];
+    const normals: THREE.Vector3[] = [];
     for (let i=0; i<Math.PI*2 * revolutions; i+=fidelity) {
         const pt1 = spiralPoint(i, shift1)
         const pt2 = spiralPoint(i, shift2);
         points.push(pt1);
         points.push(pt2);
+
+        normals.push(spiralPoint(i, shift1.clone().add(tubeShift)).sub(pt1));
+        normals.push(spiralPoint(i, shift2.clone().add(tubeShift)).sub(pt2));
     }
 
-    return quadStrip(points);
+    return quadStrip(points, normals);
 }
 
 function spiralPoint(
@@ -105,15 +118,25 @@ const stripShifts = [
     new THREE.Vector3(stripThickness, 0,          0)
 ];
 
-const stripMaterial = new THREE.ShaderMaterial({
+const wideStripMaterial = new THREE.ShaderMaterial({
     uniforms: {
         u_resolution: {
             value: new THREE.Vector3()
         }
     },
-    vertexShader: stripVertexShader,
-    fragmentShader: stripFragmentShader
+    vertexShader: wideStripVertexShader,
+    fragmentShader: wideStripFragmentShader
 });
+const thinStripMaterial = new THREE.ShaderMaterial({
+    fragmentShader: thinStripFragmentShader
+});
+
+const stripMaterials = [
+    wideStripMaterial,
+    thinStripMaterial,
+    wideStripMaterial,
+    thinStripMaterial
+]
 
 
 const numStrips = 4;
@@ -126,15 +149,13 @@ for (let stripIndex=0; stripIndex<numStrips; stripIndex++) {
                     .add(stripShifts[j]!),
                 new THREE.Vector3(0, phiShift, 0)
                     .add(stripShifts[(j+1) % stripShifts.length]!)),
-            stripMaterial));
+            stripMaterials[j]));
     }
 }
 
 scene.add(stripGroup);
 
-
 scene.background =new THREE.Color(1,0,0);
-
 
 
 camera.position.z = 15 ;
