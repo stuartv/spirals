@@ -9,7 +9,10 @@
     // See also https://aka.ms/tsconfig/module
     "module": "esnext",
     "target": "esnext",
-    "types": [],
+    "types": [
+      "vite-plugin-glsl/ext",
+      "vite/client"
+    ],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],

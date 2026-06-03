@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import stripVertexShader from './shaders/wideStrip.vert?raw';
+import stripFragmentShader from './shaders/wideStrip.frag?raw';
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
@@ -100,51 +102,6 @@ const stripShifts = [
     new THREE.Vector3(stripThickness, 0,          0)
 ];
 
-const stripVertexShader = `
-  // Declare the varying variable (same name and type in both shaders)
-  varying vec3 vPosition;
-  varying vec3 vNormal;
-
-  void main() {
-    // Pass the local vertex position data to the fragment shader
-    vPosition = position; 
-    vNormal = normal;
-
-    // Standard projection formula required by Three.js
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  }
-`;
-
-const stripFragmentShader = `
-#define PI 3.14159265358979323846
-
-uniform vec2 u_resolution;
-varying vec3 vNormal;
-
-void main() {
-    float r = length(vNormal);
-    float theta = atan(vNormal.y, vNormal.x);
-    float phi = acos(vNormal.z / r);
-
-    // Normalize to [0,1]
-    vec2 st = vec2(theta / (2.0 * PI), phi / PI);
-    
-    float color = 0.0;
-    float gridXFreq = 1.0 / 40.0;
-    float gridYFreq = 1.0 / 30.0;
-    float gridXWidth = .01 * sin(st.x * PI);
-    float gridYWidth = .01 * sin(st.y * PI);
-    
-    if (mod(st.x, gridXFreq) < gridXWidth){
-        color = 1.0;
-    } else if (mod(st.y, gridYFreq) < gridYWidth){
-        color = 1.0;
-    }
-
-    gl_FragColor = vec4(color, color, color,1.0);
-}
-`;
-
 const stripMaterial = new THREE.ShaderMaterial({
     uniforms: {
         u_resolution: {
@@ -187,16 +144,3 @@ function animate(time: number) {
 }
 
 renderer.setAnimationLoop(animate);
-
-/*
-// Assuming 'cart' is your vec3(x, y, z)
-float r = length(cart);
-float theta = atan(cart.y, cart.x); // Azimuth
-float phi = acos(cart.z / r);       // Polar / Zenith
-
-vec2 uv = vec2(
-    theta / (2.0 * PI), // Normalize to [0, 1]
-    phi / PI            // Normalize to [0, 1]
-);
-
-*/
