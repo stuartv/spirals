@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import wideStripVertexShader from './shaders/wideStrip.vert?raw';
 import wideStripFragmentShader from './shaders/wideStrip.frag?raw';
 import thinStripFragmentShader from './shaders/thinStrip.frag?raw';
+import planeFragmentShader from './shaders/plane.frag?raw';
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
@@ -56,7 +57,7 @@ function strip(
     shift2: THREE.Vector3,
 ): THREE.BufferGeometry {
     const revolutions = 1.5;
-    const fidelity = .05;
+    const fidelity = .005;
 
     const tubeShift = new THREE.Vector3(1, 0, 0);
 
@@ -155,8 +156,40 @@ for (let stripIndex=0; stripIndex<numStrips; stripIndex++) {
 
 scene.add(stripGroup);
 
-scene.background =new THREE.Color(1,0,0);
+// scene.add(new THREE.Mesh(
+//     new THREE.TorusGeometry( 5, 2, 16, 100 ),
+//     wideStripMaterial
+// ));
 
+// scene.add(new THREE.Mesh(
+//     new THREE.SphereGeometry(5),
+//     wideStripMaterial
+// ));
+
+// scene.add(new THREE.Mesh(
+//     new THREE.TorusGeometry( 5, 2, 16, 100 ),
+//     new THREE.MeshLambertMaterial({
+//         color: new THREE.Color(0,1,0)})));
+
+// scene.add(new THREE.Mesh(
+//     new THREE.PlaneGeometry(),
+//     new THREE.ShaderMaterial({
+//         uniforms: {
+//             u_resolution: {
+//                 value: new THREE.Vector2(1,1)
+//             }
+//         },
+//         fragmentShader: planeFragmentShader
+//     })));
+
+
+scene.background = new THREE.Color(1,0,0);
+
+const pointLight = new THREE.PointLight(
+    new THREE.Color(255, 255, 255),
+    1, 100, 2);
+pointLight.position.set(10, 10, 10);
+scene.add(pointLight);
 
 camera.position.z = 15 ;
 controls.update();
