@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-const scene = new THREE.Scene();
+const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
@@ -100,6 +100,62 @@ const stripShifts = [
     new THREE.Vector3(stripThickness, 0,          0)
 ];
 
+const stripVertexShader = `
+  // Declare the varying variable (same name and type in both shaders)
+  varying vec3 vPosition;
+  varying vec3 vNormal;
+
+  void main() {
+    // Pass the local vertex position data to the fragment shader
+    vPosition = position; 
+    vNormal = normal;
+
+    // Standard projection formula required by Three.js
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const stripFragmentShader = `
+#define PI 3.14159265358979323846
+
+uniform vec2 u_resolution;
+varying vec3 vNormal;
+
+void main() {
+    float r = length(vNormal);
+    float theta = atan(vNormal.y, vNormal.x);
+    float phi = acos(vNormal.z / r);
+
+    // Normalize to [0,1]
+    vec2 st = vec2(theta / (2.0 * PI), phi / PI);
+    
+    float color = 0.0;
+    float gridXFreq = 1.0 / 40.0;
+    float gridYFreq = 1.0 / 30.0;
+    float gridXWidth = .01 * sin(st.x * PI);
+    float gridYWidth = .01 * sin(st.y * PI);
+    
+    if (mod(st.x, gridXFreq) < gridXWidth){
+        color = 1.0;
+    } else if (mod(st.y, gridYFreq) < gridYWidth){
+        color = 1.0;
+    }
+
+    gl_FragColor = vec4(color, color, color,1.0);
+}
+`;
+
+const stripMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+        u_resolution: {
+            value: new THREE.Vector3()
+        }
+    },
+    vertexShader: stripVertexShader,
+    fragmentShader: stripFragmentShader
+});
+
+
 const numStrips = 4;
 for (let stripIndex=0; stripIndex<numStrips; stripIndex++) {
     const phiShift = Math.PI*2 / numStrips * stripIndex;
@@ -110,11 +166,16 @@ for (let stripIndex=0; stripIndex<numStrips; stripIndex++) {
                     .add(stripShifts[j]!),
                 new THREE.Vector3(0, phiShift, 0)
                     .add(stripShifts[(j+1) % stripShifts.length]!)),
-            new THREE.MeshNormalMaterial()));
+            stripMaterial));
     }
 }
 
 scene.add(stripGroup);
+
+
+scene.background =new THREE.Color(1,0,0);
+
+
 
 camera.position.z = 15 ;
 
@@ -137,23 +198,5 @@ vec2 uv = vec2(
     theta / (2.0 * PI), // Normalize to [0, 1]
     phi / PI            // Normalize to [0, 1]
 );
-
-void main() {
-    vec2 st = gl_FragCoord.xy/u_resolution.xy;
-    
-    float color = 0.0;
-    float gridXFreq = 1.0 / 40.0;
-    float gridYFreq = 1.0 / 30.0;
-    float gridXWidth = .02 * sin(st.x * PI);
-    float gridYWidth = .03 * sin(st.y * PI);
-    
-    if (mod(st.x, gridXFreq) < gridXWidth){
-        color = 1.0;
-    } else if (mod(st.y, gridYFreq) < gridYWidth){
-        color = 1.0;
-    }
-
-    gl_FragColor = vec4(color, color, color,1.0);
-}
 
 */
