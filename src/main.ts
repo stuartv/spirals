@@ -47,7 +47,7 @@ function quadStrip(
         new THREE.BufferAttribute(
             new Float32Array(points.flatMap((point, i) => 
                 [
-                    i % 1,
+                    i % 2,
                     Math.floor(i / 2) / (points.length / 2)
                 ])),
             uvElementSize));
