@@ -7,7 +7,7 @@ varying vec2 vUv;
 
 vec3 stripe(vec2 uv, vec3 normal) {
     float numLines = 4.0;
-    float stripeWidth = max(0.0, .5 * (normal.y * .5 + .4));
+    float stripeWidth = max(0.0, .5 * (normal.y * .45 + .5));
     float isStripe = step(fract(uv.x * numLines), stripeWidth);
     float grayColor = .7;
     return vec3(1.0 - isStripe * (1.0 - grayColor));

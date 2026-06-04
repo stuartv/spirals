@@ -7,8 +7,6 @@ import wideStripFragmentShader from './shaders/wideStrip.frag?raw';
 import thinStripVertexShader from './shaders/thinStrip.vert?raw';
 import thinStripFragmentShader from './shaders/thinStrip.frag?raw';
 
-import planeFragmentShader from './shaders/plane.frag?raw';
-
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
     75,
@@ -16,7 +14,9 @@ const camera = new THREE.PerspectiveCamera(
     0.1,
     1000);
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({
+    //antialias: true
+});
 renderer.setSize(
     window.innerWidth,
     window.innerHeight);
@@ -61,8 +61,6 @@ function quadStrip(
     }
     geometry.setIndex(indexes);
 
-    // geometry.computeVertexNormals();
-
     return geometry;
 }
 
@@ -71,7 +69,7 @@ function strip(
     shift2: THREE.Vector3,
 ): THREE.BufferGeometry {
     const revolutions = 1.5;
-    const fidelity = .05;
+    const fidelity = .001;
 
     const tubeShift = new THREE.Vector3(1, 0, 0);
 
