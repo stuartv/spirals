@@ -38,7 +38,6 @@ function quadStrip(
             new Float32Array(points.flatMap(point => point.toArray())),
             positionElementSize));
 
-    // Making this a 64 bit array might fix precision errors in fragment shader
     geometry.setAttribute('normal',
         new THREE.BufferAttribute(
             new Float32Array(normals.flatMap(normal => normal.toArray())),

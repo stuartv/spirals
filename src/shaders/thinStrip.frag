@@ -5,6 +5,11 @@ uniform float u_time;
 varying vec3 vNormal;
 varying vec2 vUv;
 
-void main() {
-    gl_FragColor = vec4(vUv.x, vUv.y, 0.0, 1.0);
+void main() {    
+    float numLines = 1000.0;
+
+    float isStripe = step(fract(vUv.y * numLines), .8);
+
+
+    gl_FragColor = vec4(isStripe, isStripe, isStripe, 1.0);
 }
