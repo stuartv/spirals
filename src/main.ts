@@ -3,7 +3,10 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 import wideStripVertexShader from './shaders/wideStrip.vert?raw';
 import wideStripFragmentShader from './shaders/wideStrip.frag?raw';
+
+import thinStripVertexShader from './shaders/thinStrip.vert?raw';
 import thinStripFragmentShader from './shaders/thinStrip.frag?raw';
+
 import planeFragmentShader from './shaders/plane.frag?raw';
 
 const scene = new THREE.Scene()
@@ -26,17 +29,29 @@ function quadStrip(
     normals: THREE.Vector3[]
 ): THREE.BufferGeometry {
     const geometry = new THREE.BufferGeometry();
-    const numbersPerElement = 3;
+    const positionElementSize = 3;
+    const normalElementSize = 3;
+    const uvElementSize = 2;
 
     geometry.setAttribute('position',
         new THREE.BufferAttribute(
             new Float32Array(points.flatMap(point => point.toArray())),
-            numbersPerElement));
+            positionElementSize));
 
+    // Making this a 64 bit array might fix precision errors in fragment shader
     geometry.setAttribute('normal',
         new THREE.BufferAttribute(
             new Float32Array(normals.flatMap(normal => normal.toArray())),
-            numbersPerElement));
+            normalElementSize));
+
+    geometry.setAttribute('uv',
+        new THREE.BufferAttribute(
+            new Float32Array(points.flatMap((point, i) => 
+                [
+                    i % 1,
+                    Math.floor(i / 2) / (points.length / 2)
+                ])),
+            uvElementSize));
 
     const numQuads = (points.length / 2) - 1;
     const indexes: number[] = [];
@@ -132,6 +147,7 @@ const wideStripMaterial = new THREE.ShaderMaterial({
     fragmentShader: wideStripFragmentShader
 });
 const thinStripMaterial = new THREE.ShaderMaterial({
+    vertexShader: thinStripVertexShader,
     fragmentShader: thinStripFragmentShader
 });
 
@@ -186,7 +202,7 @@ scene.add(stripGroup);
 //     })));
 
 
-scene.background = new THREE.Color(1,0,0);
+scene.background = new THREE.Color(.1,0,0);
 
 const pointLight = new THREE.PointLight(
     new THREE.Color(255, 255, 255),
