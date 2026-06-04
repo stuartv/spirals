@@ -6,10 +6,10 @@ varying vec3 vNormal;
 varying vec2 vUv;
 
 void main() {    
-    float numLines = 1000.0;
+    float numLines = 300.0;
+    float stripeWidth = mix(.01, .99, vNormal.x * .5 + .5);
 
-    float isStripe = step(fract(vUv.y * numLines), .8);
-
+    float isStripe = step(fract(vUv.y * numLines), stripeWidth);
 
     gl_FragColor = vec4(isStripe, isStripe, isStripe, 1.0);
 }
