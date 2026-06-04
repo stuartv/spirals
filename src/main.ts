@@ -57,7 +57,7 @@ function strip(
     shift2: THREE.Vector3,
 ): THREE.BufferGeometry {
     const revolutions = 1.5;
-    const fidelity = .005;
+    const fidelity = .05;
 
     const tubeShift = new THREE.Vector3(1, 0, 0);
 
@@ -123,6 +123,9 @@ const wideStripMaterial = new THREE.ShaderMaterial({
     uniforms: {
         u_resolution: {
             value: new THREE.Vector3()
+        },
+        u_time: {
+            value: 0.0
         }
     },
     vertexShader: wideStripVertexShader,
@@ -195,6 +198,9 @@ camera.position.z = 15 ;
 controls.update();
 
 function animate(time: number) {
+
+    wideStripMaterial.uniforms.u_time!.value = time;
+
     renderer.render(scene, camera);
 }
 
