@@ -14,6 +14,7 @@ vec3 stripe(vec2 uv, vec3 normal) {
 }
 
 void main() {
+    // TODO: eliminate branching
     float edgeWidth = .05;
     if (vUv.x < edgeWidth || vUv.x > 1.0 - edgeWidth) {
         gl_FragColor = vec4(vec3(0), 1.0);
@@ -21,6 +22,8 @@ void main() {
     }
 
     vec3 normalized = normalize(vNormal);
+    vec3 source = normalize(vec3(-1.0, -1.0, -1.0));
+    float squareScale = length(normalized + source) / 2.0;
 
     // Map normal to spherical coordinates
     float theta = atan(normalized.y, normalized.x);
@@ -38,7 +41,7 @@ void main() {
         (floor(st.x * gridNumX) + .5) / gridNumX,
         (floor(st.y * gridNumY) + .5) / gridNumY);
 
-    float squareScale = distance(vec2(.5, .5), st) * 1.6;
+    // float squareScale = distance(vec2(.5, .5), st) * 1.6;
         
     float squareSizeX = squareScale / gridNumX;
     float squareSizeY = squareScale / gridNumY;
