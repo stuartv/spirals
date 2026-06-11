@@ -61,13 +61,13 @@ export class PencilLinesPass extends Pass {
 
         if (this.renderToScreen) {
             renderer.setRenderTarget(null);
-            this.fsQuad.render(renderer);
         } else {
             renderer.setRenderTarget(writeBuffer);
             if (this.clear) {
                 renderer.clear();
             }
-            this.fsQuad.render(renderer);
         }
+
+        this.fsQuad.render(renderer);
     }
 }
