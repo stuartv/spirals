@@ -6,6 +6,8 @@ import wideStripFragmentShader from './shaders/wideStrip.frag?raw';
 
 import thinStripVertexShader from './shaders/thinStrip.vert?raw';
 import thinStripFragmentShader from './shaders/thinStrip.frag?raw';
+import { EffectComposer, RenderPass } from 'three/examples/jsm/Addons.js';
+import { PencilLinesPass } from './passes/pencilLinesPass';
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
@@ -20,6 +22,13 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(
     window.innerWidth,
     window.innerHeight);
+
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+const pencilLinesPass = new PencilLinesPass();
+
+composer.addPass(renderPass);
+composer.addPass(pencilLinesPass);
 
 document.body.appendChild( renderer.domElement );
 const controls = new OrbitControls( camera, renderer.domElement );
@@ -214,7 +223,7 @@ function animate(time: number) {
 
     wideStripMaterial.uniforms.u_time!.value = time;
 
-    renderer.render(scene, camera);
+    composer.render();
 }
 
 renderer.setAnimationLoop(animate);
