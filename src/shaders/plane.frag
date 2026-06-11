@@ -5,6 +5,7 @@ precision mediump float;
 uniform vec2 u_resolution;
 uniform vec2 u_mouse;
 uniform float u_time;
+varying vec2 vUv;
 
 vec2 grad( ivec2 z )  // replace this anything that returns a random vector
 {
@@ -37,14 +38,20 @@ float noise( in vec2 p )
 }
 
 void main() {
+    // vec2 p = vUv.xy;
+    // vec2 p = vec2(sin(gl_FragCoord.x), sin(gl_FragCoord.y));
     vec2 p = vec2(
-        gl_FragCoord.x / u_resolution.x,
-        gl_FragCoord.y / u_resolution.y);
+        gl_FragCoord.x / min(u_resolution.x, u_resolution.y),
+        gl_FragCoord.y / min(u_resolution.x, u_resolution.y)
+        );
 
-    float f = noise(gl_FragCoord.xy);
-    // f = 0.5 + 0.5*f;
-    // f *= smoothstep( 0.0, 0.005, abs(p.x-0.6) );
+    float scale = 700.0;
 
-	gl_FragColor = vec4(gl_FragCoord.x, gl_FragCoord.y, 0.0, 1.0);
+    float f = noise(scale * p);
+    f = 0.5 + 0.5*f;
+    f *= smoothstep( 0.0, 0.005, abs(p.x) );
+
+    vec3 color = vec3(f);
+	gl_FragColor = vec4(color, 1.0);
     // gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
 }

@@ -1,14 +1,13 @@
 import * as THREE from 'three';
+import { EffectComposer, RenderPass } from 'three/examples/jsm/Addons.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 import wideStripVertexShader from './shaders/wideStrip.vert?raw';
 import wideStripFragmentShader from './shaders/wideStrip.frag?raw';
-
 import planeFragmentShader from './shaders/plane.frag?raw';
-
 import thinStripVertexShader from './shaders/thinStrip.vert?raw';
 import thinStripFragmentShader from './shaders/thinStrip.frag?raw';
-import { EffectComposer, RenderPass } from 'three/examples/jsm/Addons.js';
+
 import { PencilLinesPass } from './passes/pencilLinesPass';
 
 const scene = new THREE.Scene()
@@ -203,14 +202,18 @@ scene.add(stripGroup);
 //     new THREE.MeshLambertMaterial({
 //         color: new THREE.Color(0,1,0)})));
 
+const size = new THREE.Vector2();
+renderer.getDrawingBufferSize(size);
+
 scene.add(new THREE.Mesh(
     new THREE.PlaneGeometry(5, 5),
     new THREE.ShaderMaterial({
         uniforms: {
             u_resolution: {
-                value: new THREE.Vector3()
+                value: size
             }
         },
+        vertexShader: wideStripVertexShader,
         fragmentShader: planeFragmentShader
     })));
 
