@@ -4,6 +4,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import wideStripVertexShader from './shaders/wideStrip.vert?raw';
 import wideStripFragmentShader from './shaders/wideStrip.frag?raw';
 
+import planeFragmentShader from './shaders/plane.frag?raw';
+
 import thinStripVertexShader from './shaders/thinStrip.vert?raw';
 import thinStripFragmentShader from './shaders/thinStrip.frag?raw';
 import { EffectComposer, RenderPass } from 'three/examples/jsm/Addons.js';
@@ -27,7 +29,9 @@ const composer = new EffectComposer(renderer);
 const renderPass = new RenderPass(scene, camera);
 const pencilLinesPass = new PencilLinesPass({
     width: window.innerWidth,
-    height: window.innerHeight
+    height: window.innerHeight,
+    scene,
+    camera
 });
 
 composer.addPass(renderPass);
@@ -199,19 +203,19 @@ scene.add(stripGroup);
 //     new THREE.MeshLambertMaterial({
 //         color: new THREE.Color(0,1,0)})));
 
-// scene.add(new THREE.Mesh(
-//     new THREE.PlaneGeometry(),
-//     new THREE.ShaderMaterial({
-//         uniforms: {
-//             u_resolution: {
-//                 value: new THREE.Vector2(1,1)
-//             }
-//         },
-//         fragmentShader: planeFragmentShader
-//     })));
+scene.add(new THREE.Mesh(
+    new THREE.PlaneGeometry(5, 5),
+    new THREE.ShaderMaterial({
+        uniforms: {
+            u_resolution: {
+                value: new THREE.Vector3()
+            }
+        },
+        fragmentShader: planeFragmentShader
+    })));
 
 
-scene.background = new THREE.Color(.1,0,0);
+scene.background = new THREE.Color(.5, .5, .5);
 
 const pointLight = new THREE.PointLight(
     new THREE.Color(255, 255, 255),

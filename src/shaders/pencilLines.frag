@@ -1,5 +1,6 @@
 uniform sampler2D tDiffuse;
 uniform vec2 uResolution;
+uniform sampler2D uNormals;
 varying vec2 vUv;
 
 float valueAtPoint(sampler2D image, vec2 coord, vec2 texel, vec2 point) {
@@ -12,8 +13,12 @@ float diffuseValue(int x, int y) {
     return valueAtPoint(tDiffuse, vUv, vec2(1.0 / uResolution.x, 1.0 / uResolution.y), vec2(x, y)) * 0.6;
 }
 
+float normalValue(int x, int y) {
+    return valueAtPoint(uNormals, vUv, vec2(1.0 / uResolution.x, 1.0 / uResolution.y), vec2(x, y)) * 0.3;
+}
+
 float getValue(int x, int y) {
-    return diffuseValue(x, y);
+    return normalValue(x, y); //+ diffuseValue(x, y);
 }
 
 float combinedSobelValue() {
@@ -57,11 +62,13 @@ void main() {
     float sobelValue = combinedSobelValue();
     sobelValue = smoothstep(0.01, 0.03, sobelValue);
 
-    vec4 lineColor = vec4(0.32, 0.12, 0.2, 1.0);
+    vec4 lineColor = vec4(0.0, 1.0, 0.0, 1.0);
 
-    if (sobelValue > 0.1) {
+    if (sobelValue > .1) {
         gl_FragColor = lineColor;
     } else {
-        gl_FragColor = vec4(1.0);
+        gl_FragColor = texture2D(tDiffuse, vUv);
+        // gl_FragColor = vec4(1.0);
+        // gl_FragColor = texture2D(uNormals, vUv);
     }
 }
