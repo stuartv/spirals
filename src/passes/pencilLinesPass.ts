@@ -5,7 +5,7 @@ import { PencilLinesMaterial } from '../shaderMaterials/pencilLinesMaterial';
 export class PencilLinesPass extends Pass {
     fsQuad: FullScreenQuad;
     material: PencilLinesMaterial;
-    normalBuffer;
+    normalBuffer: THREE.WebGLRenderTarget;
     normalMaterial: THREE.MeshNormalMaterial;
     scene: THREE.Scene;
     camera: THREE.Camera;
@@ -25,14 +25,17 @@ export class PencilLinesPass extends Pass {
         this.scene = scene;
         this.camera = camera
 
-        const normalBuffer = new THREE.WebGLRenderTarget(width, height)
-        normalBuffer.texture.format = THREE.RGBAFormat
-        normalBuffer.texture.type = THREE.HalfFloatType
-        normalBuffer.texture.minFilter = THREE.NearestFilter
-        normalBuffer.texture.magFilter = THREE.NearestFilter
-        normalBuffer.texture.generateMipmaps = false
-        normalBuffer.stencilBuffer = false
-        this.normalBuffer = normalBuffer
+        this.normalBuffer = new THREE.WebGLRenderTarget(
+            width,
+            height,
+            {
+                format: THREE.RGBAFormat,
+                type: THREE.HalfFloatType,
+                minFilter: THREE.NearestFilter,
+                magFilter: THREE.NearestFilter,
+                generateMipmaps: false,
+                stencilBuffer: false,
+            });
         this.normalMaterial = new THREE.MeshNormalMaterial()
 
         this.material = new PencilLinesMaterial;
