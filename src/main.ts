@@ -25,7 +25,10 @@ renderer.setSize(
 
 const composer = new EffectComposer(renderer);
 const renderPass = new RenderPass(scene, camera);
-const pencilLinesPass = new PencilLinesPass();
+const pencilLinesPass = new PencilLinesPass({
+    width: window.innerWidth,
+    height: window.innerHeight
+});
 
 composer.addPass(renderPass);
 composer.addPass(pencilLinesPass);

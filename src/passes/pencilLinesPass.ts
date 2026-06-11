@@ -1,16 +1,24 @@
 import {Pass, FullScreenQuad} from 'three/examples/jsm/postprocessing/Pass.js';
 import * as THREE from 'three';
-import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
+import { PencilLinesMaterial } from '../shaderMaterials/pencilLinesMaterial';
 
 export class PencilLinesPass extends Pass {
     fsQuad: FullScreenQuad;
-    material: THREE.ShaderMaterial;
+    material: PencilLinesMaterial;
 
-    constructor() {
-        super()
+    constructor({
+        width,
+        height
+    }: {
+        width: number;
+        height: number
+    }) {
+        super();
 
-        this.material = new THREE.ShaderMaterial(CopyShader);
+        this.material = new PencilLinesMaterial;
         this.fsQuad = new FullScreenQuad(this.material);
+
+        this.material.uniforms.uResolution!.value = new THREE.Vector2(width, height);
     }
 
     render(
