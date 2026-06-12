@@ -24,6 +24,9 @@ renderer.setSize(
     window.innerWidth,
     window.innerHeight);
 
+const size = new THREE.Vector2();
+renderer.getDrawingBufferSize(size);
+
 const composer = new EffectComposer(renderer);
 const renderPass = new RenderPass(scene, camera);
 const pencilLinesPass = new PencilLinesPass({
@@ -149,7 +152,7 @@ const stripShifts = [
 const wideStripMaterial = new THREE.ShaderMaterial({
     uniforms: {
         u_resolution: {
-            value: new THREE.Vector3()
+            value: size
         },
         u_time: {
             value: 0.0
@@ -159,6 +162,11 @@ const wideStripMaterial = new THREE.ShaderMaterial({
     fragmentShader: wideStripFragmentShader
 });
 const thinStripMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+        u_resolution: {
+            value: size
+        }
+    },
     vertexShader: thinStripVertexShader,
     fragmentShader: thinStripFragmentShader
 });
@@ -202,11 +210,8 @@ scene.add(stripGroup);
 //     new THREE.MeshLambertMaterial({
 //         color: new THREE.Color(0,1,0)})));
 
-const size = new THREE.Vector2();
-renderer.getDrawingBufferSize(size);
-
-scene.add(new THREE.Mesh(
-    new THREE.PlaneGeometry(5, 5),
+camera.add(new THREE.Mesh(
+    new THREE.PlaneGeometry(5000, 5000),
     new THREE.ShaderMaterial({
         uniforms: {
             u_resolution: {
@@ -214,8 +219,11 @@ scene.add(new THREE.Mesh(
             }
         },
         vertexShader: wideStripVertexShader,
-        fragmentShader: planeFragmentShader
-    })));
+        fragmentShader: planeFragmentShader,
+        depthWrite: false
+    })).translateZ(camera.far * -.99));
+
+scene.add(camera);
 
 
 scene.background = new THREE.Color(.5, .5, .5);
