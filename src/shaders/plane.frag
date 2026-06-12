@@ -37,19 +37,39 @@ float noise( in vec2 p )
                      dot( grad( i+ivec2(1,1) ), f-vec2(1.0,1.0) ), u.x), u.y);
 }
 
+float ramp(vec2 p, vec2 scale, float minVal, float maxVal) {
+    return mix(minVal, maxVal, .5 * noise(vec2(scale.x * p.x, scale.y * p.y)) + .5);
+} 
+
 void main() {
-    // vec2 p = vUv.xy;
+    vec2 p = vUv.xy;
     // vec2 p = vec2(sin(gl_FragCoord.x), sin(gl_FragCoord.y));
-    vec2 p = vec2(
-        gl_FragCoord.x / min(u_resolution.x, u_resolution.y),
-        gl_FragCoord.y / min(u_resolution.x, u_resolution.y)
-        );
+    // vec2 p = vec2(
+    //     gl_FragCoord.x / min(u_resolution.x, u_resolution.y),
+    //     gl_FragCoord.y / min(u_resolution.x, u_resolution.y)
+    //     );
 
-    float scale = 500.0;
+    // Noise configurations
+    float blackInk   = ramp(p, vec2(400.0),       0.05, 0.2);
+    float grayInk    = ramp(p, vec2(400.0),       0.10, 1.0);
+    float paperGrain = ramp(p, vec2(400.0, 25.0), 0.70, 0.8);
 
-    float f = noise(scale * p);
-    f = 0.5*f + .5;
-    f *= smoothstep( 0.0, 0.005, abs(p.x) );
+    float value = paperGrain;
 
-	gl_FragColor = vec4(vec3(f), 1.0);
+    // Colors
+    vec3 paperColor = vec3(.945, .910, .746);
+    vec3 darkest    = vec3(.0,   .0,   .0);
+
+    float border = .2;
+    border += .005 * noise(p * vec2(10.0));
+    
+    if (p.x < border || p.y < border) {
+        value = paperGrain;
+    } else if (distance(p, vec2(.5, .5)) < .2) {
+        value = blackInk; 
+    } else {
+        value = grayInk;
+    }
+
+	gl_FragColor = vec4(mix(vec3(darkest), vec3(paperColor), value), 1.0);
 }
