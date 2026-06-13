@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import { EffectComposer, RenderPass } from 'three/examples/jsm/Addons.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+import myCustomNoise from './shaders/chunks/myCustomNoise.glsl?raw';
+THREE.ShaderChunk['myCustomNoise'] = myCustomNoise;
+
 import wideStripVertexShader from './shaders/wideStrip.vert?raw';
 import wideStripFragmentShader from './shaders/wideStrip.frag?raw';
 import planeFragmentShader from './shaders/plane.frag?raw';
@@ -26,6 +29,8 @@ renderer.setSize(
 
 const size = new THREE.Vector2();
 renderer.getDrawingBufferSize(size);
+
+
 
 const composer = new EffectComposer(renderer);
 const renderPass = new RenderPass(scene, camera);
