@@ -242,7 +242,27 @@ const timer = new THREE.Timer();
 timer.connect(document);
 let lastTime = timer.getElapsed();
 
+function matrix4FromMatrix3(matrix3: THREE.Matrix3) {
+  const m3 = matrix3.elements; // Array of 9 elements
+  const matrix4 = new THREE.Matrix4();
+  
+  // Three.js uses column-major order internally
+  matrix4.set(
+    m3[0], m3[3], m3[6], 0,
+    m3[1], m3[4], m3[7], 0,
+    m3[2], m3[5], m3[8], 0,
+        0,     0,     0, 1
+  );
+  
+  return matrix4;
+}
+
 function animate(time: number) {
+    // stripGroup.normalMatrix.setFromMatrix4(
+    //     new THREE.Matrix4().extractRotation(stripGroup.matrixWorld)
+    //     .multiply(matrix4FromMatrix3(stripGroup.normalMatrix.clone())));    
+    
+
     timer.update();
     const elapsedTime = timer.getElapsed() - lastTime;
     lastTime = timer.getElapsed();
