@@ -30,8 +30,6 @@ renderer.setSize(
 const size = new THREE.Vector2();
 renderer.getDrawingBufferSize(size);
 
-
-
 const composer = new EffectComposer(renderer);
 const renderPass = new RenderPass(scene, camera);
 const pencilLinesPass = new PencilLinesPass({
@@ -230,9 +228,6 @@ camera.add(new THREE.Mesh(
 
 scene.add(camera);
 
-
-scene.background = new THREE.Color(.5, .5, .5);
-
 const pointLight = new THREE.PointLight(
     new THREE.Color(255, 255, 255),
     1, 100, 2);
@@ -240,10 +235,20 @@ pointLight.position.set(10, 10, 10);
 scene.add(pointLight);
 
 camera.position.z = 15 ;
-controls.update();
+
+stripGroup.rotateX(-.7);
+
+const timer = new THREE.Timer();
+timer.connect(document);
+let lastTime = timer.getElapsed();
 
 function animate(time: number) {
+    timer.update();
+    const elapsedTime = timer.getElapsed() - lastTime;
+    lastTime = timer.getElapsed();
 
+    stripGroup.rotateZ(-elapsedTime * .5);
+    
     wideStripMaterial.uniforms.u_time!.value = time;
 
     composer.render();
