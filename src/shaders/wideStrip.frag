@@ -34,6 +34,7 @@ void main() {
     vec3 normalized = normalize(vNormal);
     vec3 source = normalize(u_lightVec);
     float squareScale = length(normalized + source) / 2.0;
+    squareScale = pow(squareScale, 2.5);
 
     // Map normal to spherical coordinates
     float theta = atan(normalized.y, normalized.x);

@@ -243,9 +243,9 @@ const pointLight = new THREE.PointLight(
 pointLight.position.set(10, 10, 10);
 scene.add(pointLight);
 
-camera.position.z = 15 ;
+camera.position.set(0, 0, 15);
 
-stripGroup.rotateZ(-3 / 4 * Math.PI);
+// stripGroup.rotateZ(-3 / 4 * Math.PI);
 stripGroup.rotateX(-.8);
 
 
@@ -285,7 +285,7 @@ function animate(time: number) {
     wideStripMaterial.uniforms.u_normalRotation!.value = new THREE.Matrix4()
         .makeRotationZ(-totalRotation);
 
-    const lightVector = new THREE.Vector3(-.2, -1, -.2).normalize()
+    const lightVector = new THREE.Vector3(.2, -.8, -.2).normalize()
         .applyAxisAngle(new THREE.Vector3(0,0,1), -totalRotation);
 
     wideStripMaterial.uniforms.u_lightVec!.value = lightVector;
