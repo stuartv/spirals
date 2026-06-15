@@ -19,6 +19,9 @@ void stripe(vec2 uv, vec3 normal) {
 }
 
 void main() {
+    // gl_FragColor = vec4(vNormal, 1);
+    // return;
+
     // TODO: eliminate branching
     float edgeWidth = .05;
     if (vUv.x < edgeWidth || vUv.x > 1.0 - edgeWidth) {

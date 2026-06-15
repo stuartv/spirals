@@ -3,15 +3,16 @@ varying vec3 vPosition;
 varying vec3 vNormal;
 varying vec2 vUv;
 
-layout(location = 0) in vec3 aNormal;
-
 void main() {
     // Pass the local vertex position data to the fragment shader
     vPosition = position; 
 
-    mat3 normalMatrix = transpose(inverse(mat3(modelViewMatrix)));
-    vNormal = normalMatrix * normal;
     // vNormal = normal;
+    vNormal = vec3(vec4(normal, 1.0) * inverse(modelViewMatrix));
+    float x = vNormal[0];
+    float y = vNormal[1];
+    float z = vNormal[2];
+     vNormal = vec3(x, z, -y);
 
     vUv = uv;
 
