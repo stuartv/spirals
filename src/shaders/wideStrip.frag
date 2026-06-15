@@ -2,6 +2,7 @@
 
 uniform vec2 u_resolution;
 uniform float u_time;
+uniform vec3 u_lightVec;
 varying vec3 vNormal;
 varying vec2 vUv;
 
@@ -19,6 +20,7 @@ void stripe(vec2 uv, vec3 normal) {
 }
 
 void main() {
+    // gl_FragColor = vec4(u_lightVec, 1);
     // gl_FragColor = vec4(vNormal, 1);
     // return;
 
@@ -30,7 +32,7 @@ void main() {
     }
 
     vec3 normalized = normalize(vNormal);
-    vec3 source = normalize(vec3(-1.0, -1.0, -1.0));
+    vec3 source = normalize(u_lightVec);
     float squareScale = length(normalized + source) / 2.0;
 
     // Map normal to spherical coordinates

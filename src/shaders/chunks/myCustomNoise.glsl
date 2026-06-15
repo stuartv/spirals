@@ -1,3 +1,5 @@
+#define noise_scale 900.0
+
 vec2 grad( ivec2 z )  // replace this anything that returns a random vector
 {
     // 2D to 1D  (feel free to replace by some other)
@@ -46,7 +48,7 @@ vec2 getScreenP() {
 }
 
 void blackInk(vec2 p) {
-    setColor(ramp(p, vec2(400.0), 0.05, 0.2));
+    setColor(ramp(p, vec2(noise_scale), 0.05, 0.2));
 }
 
 void blackInk() {
@@ -54,7 +56,7 @@ void blackInk() {
 }
 
 void grayInk(vec2 p) {
-    setColor(ramp(p, vec2(400.0), 0.10, 1.0));
+    setColor(ramp(p, vec2(noise_scale), 0.10, 1.0));
 }
 
 void grayInk() {
@@ -62,7 +64,7 @@ void grayInk() {
 }
 
 void paperGrain(vec2 p) {
-    setColor(ramp(p, vec2(400.0, 25.0), 0.70, 0.8));
+    setColor(ramp(p, vec2(noise_scale, 25.0), 0.70, 0.8));
 }
 
 void paperGrain() {

@@ -4,6 +4,8 @@ varying vec3 vNormal;
 varying vec2 vUv;
 
 uniform mat4 u_normalRotation;
+uniform vec2 u_uvShift;
+uniform vec3 u_lightVec;
 
 void main() {
     // Pass the local vertex position data to the fragment shader
@@ -11,7 +13,7 @@ void main() {
 
     vNormal = normal;
     // vNormal = vec3(vec4(normal, 1.0) * inverse(modelViewMatrix));
-    vNormal = vec3(vec4(normal, 1.0) * u_normalRotation);
+    // vNormal = vec3(vec4(normal, 1.0) * u_normalRotation);
 
     vUv = uv;
 

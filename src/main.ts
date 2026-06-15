@@ -162,6 +162,12 @@ const wideStripMaterial = new THREE.ShaderMaterial({
         },
         u_normalRotation: {
             value: new THREE.Matrix4()
+        },
+        u_uvShift: {
+            value: new THREE.Vector2(0,0)
+        },
+        u_lightVec: {
+            value: new THREE.Vector3(1, .5, .7)
         }
     },
     vertexShader: wideStripVertexShader,
@@ -239,7 +245,9 @@ scene.add(pointLight);
 
 camera.position.z = 15 ;
 
-stripGroup.rotateX(-.7);
+stripGroup.rotateZ(-3 / 4 * Math.PI);
+stripGroup.rotateX(-.8);
+
 
 const timer = new THREE.Timer();
 timer.connect(document);
@@ -270,10 +278,17 @@ function animate(time: number) {
     const stepRotation = timeStep * rotationScale;
     const totalRotation = totalTime * rotationScale;
 
+
     stripGroup.rotateZ(stepRotation);
     
     wideStripMaterial.uniforms.u_time!.value = time;
-    wideStripMaterial.uniforms.u_normalRotation!.value = new THREE.Matrix4().makeRotationZ(-totalRotation);
+    wideStripMaterial.uniforms.u_normalRotation!.value = new THREE.Matrix4()
+        .makeRotationZ(-totalRotation);
+
+    const lightVector = new THREE.Vector3(-.2, -1, -.2).normalize()
+        .applyAxisAngle(new THREE.Vector3(0,0,1), -totalRotation);
+
+    wideStripMaterial.uniforms.u_lightVec!.value = lightVector;
 
     composer.render();
 }
