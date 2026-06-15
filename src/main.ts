@@ -152,6 +152,8 @@ const stripShifts = [
     new THREE.Vector3(stripThickness, 0,          0)
 ];
 
+const initialLightVector = new THREE.Vector3(1, .5, .7);
+
 const wideStripMaterial = new THREE.ShaderMaterial({
     uniforms: {
         u_resolution: {
@@ -167,7 +169,7 @@ const wideStripMaterial = new THREE.ShaderMaterial({
             value: new THREE.Vector2(0,0)
         },
         u_lightVec: {
-            value: new THREE.Vector3(1, .5, .7)
+            value: initialLightVector.clone()
         }
     },
     vertexShader: wideStripVertexShader,
@@ -177,6 +179,9 @@ const thinStripMaterial = new THREE.ShaderMaterial({
     uniforms: {
         u_resolution: {
             value: size
+        },
+        u_lightVec: {
+            value: initialLightVector.clone()
         }
     },
     vertexShader: thinStripVertexShader,
@@ -289,6 +294,8 @@ function animate(time: number) {
         .applyAxisAngle(new THREE.Vector3(0,0,1), -totalRotation);
 
     wideStripMaterial.uniforms.u_lightVec!.value = lightVector;
+    thinStripMaterial.uniforms.u_lightVec!.value = lightVector;
+
 
     composer.render();
 }
