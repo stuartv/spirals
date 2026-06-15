@@ -159,6 +159,9 @@ const wideStripMaterial = new THREE.ShaderMaterial({
         },
         u_time: {
             value: 0.0
+        },
+        u_normalRotation: {
+            value: new THREE.Matrix4()
         }
     },
     vertexShader: wideStripVertexShader,
@@ -258,18 +261,19 @@ function matrix4FromMatrix3(matrix3: THREE.Matrix3) {
 }
 
 function animate(time: number) {
-    // stripGroup.normalMatrix.setFromMatrix4(
-    //     new THREE.Matrix4().extractRotation(stripGroup.matrixWorld)
-    //     .multiply(matrix4FromMatrix3(stripGroup.normalMatrix.clone())));    
-    
-
     timer.update();
-    const elapsedTime = timer.getElapsed() - lastTime;
-    lastTime = timer.getElapsed();
+    const totalTime = timer.getElapsed();
+    const timeStep = timer.getElapsed() - lastTime;
+    lastTime = totalTime;
 
-    stripGroup.rotateZ(-elapsedTime * .5);
+    const rotationScale = .5;
+    const stepRotation = timeStep * rotationScale;
+    const totalRotation = totalTime * rotationScale;
+
+    stripGroup.rotateZ(stepRotation);
     
     wideStripMaterial.uniforms.u_time!.value = time;
+    wideStripMaterial.uniforms.u_normalRotation!.value = new THREE.Matrix4().makeRotationZ(-totalRotation);
 
     composer.render();
 }
