@@ -8,9 +8,9 @@ varying vec2 vUv;
 
 #include <myCustomNoise>
 
-void stripe(vec2 uv, vec3 normal) {
+void stripe(vec2 uv, float squareScale) {
     float numLines = 4.0;
-    float stripeWidth = max(0.0, .5 * (normal.y * .45 + .5));
+    float stripeWidth = squareScale * squareScale;
     float isStripe = step(fract(uv.x * numLines), stripeWidth);
     if (isStripe > .5) {
         grayInk();
@@ -61,9 +61,12 @@ void main() {
         abs(squareCenter.x - st.x) < squareSizeX * .5 &&
         abs(squareCenter.y - st.y) < squareSizeY * .5;
     
+    // gl_FragColor = vec4(vec3(squareScale), 1);
+    // return;
+
     if (isInSquare) {
         blackInk();
     } else {
-        stripe(vUv, normalized);
+        stripe(vUv, squareScale);
     }
 }

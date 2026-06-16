@@ -290,7 +290,7 @@ function animate(time: number) {
     wideStripMaterial.uniforms.u_normalRotation!.value = new THREE.Matrix4()
         .makeRotationZ(-totalRotation);
 
-    const lightVector = new THREE.Vector3(.2, -.8, -.2).normalize()
+    const lightVector = new THREE.Vector3(.6, -.8, -.2).normalize()
         .applyAxisAngle(new THREE.Vector3(0,0,1), -totalRotation);
 
     wideStripMaterial.uniforms.u_lightVec!.value = lightVector;
