@@ -5,6 +5,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import myCustomNoise from './shaders/chunks/myCustomNoise.glsl?raw';
 THREE.ShaderChunk['myCustomNoise'] = myCustomNoise;
 
+import { WideStripMaterial } from './shaderMaterials/wideStripMaterial';
 import wideStripVertexShader from './shaders/wideStrip.vert?raw';
 import wideStripFragmentShader from './shaders/wideStrip.frag?raw';
 import planeFragmentShader from './shaders/plane.frag?raw';
@@ -13,37 +14,33 @@ import thinStripFragmentShader from './shaders/thinStrip.frag?raw';
 
 import { PencilLinesPass } from './passes/pencilLinesPass';
 
+const size = new THREE.Vector2(
+    window.innerWidth,
+    window.innerHeight
+);
+
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
     75,
-    window.innerWidth / window.innerHeight,
+    size.x / size.y,
     0.1,
     1000);
 
-const renderer = new THREE.WebGLRenderer({
-    //antialias: true
-});
-renderer.setSize(
-    window.innerWidth,
-    window.innerHeight);
-
-const size = new THREE.Vector2();
-renderer.getDrawingBufferSize(size);
+const renderer = new THREE.WebGLRenderer({});
+renderer.setSize(size.x, size.y);
+document.body.appendChild( renderer.domElement );
 
 const composer = new EffectComposer(renderer);
 const renderPass = new RenderPass(scene, camera);
 const pencilLinesPass = new PencilLinesPass({
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: size.x,
+    height: size.y,
     scene,
     camera
 });
 
 composer.addPass(renderPass);
 composer.addPass(pencilLinesPass);
-
-document.body.appendChild( renderer.domElement );
-const controls = new OrbitControls( camera, renderer.domElement );
 
 function quadStrip(
     points: THREE.Vector3[],
@@ -154,27 +151,8 @@ const stripShifts = [
 
 const initialLightVector = new THREE.Vector3(1, .5, .7);
 
-const wideStripMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-        u_resolution: {
-            value: size
-        },
-        u_time: {
-            value: 0.0
-        },
-        u_normalRotation: {
-            value: new THREE.Matrix4()
-        },
-        u_uvShift: {
-            value: new THREE.Vector2(0,0)
-        },
-        u_lightVec: {
-            value: initialLightVector.clone()
-        }
-    },
-    vertexShader: wideStripVertexShader,
-    fragmentShader: wideStripFragmentShader
-});
+const wideStripMaterial = new WideStripMaterial(size);
+
 const thinStripMaterial = new THREE.ShaderMaterial({
     uniforms: {
         u_resolution: {
