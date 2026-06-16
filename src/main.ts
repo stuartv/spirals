@@ -27,6 +27,7 @@ const camera = new THREE.PerspectiveCamera(
 const renderer = new THREE.WebGLRenderer({});
 renderer.setSize(size.x, size.y);
 document.body.appendChild( renderer.domElement );
+const controls = new OrbitControls( camera, renderer.domElement );
 
 const composer = new EffectComposer(renderer);
 const renderPass = new RenderPass(scene, camera);
@@ -40,8 +41,9 @@ const pencilLinesPass = new PencilLinesPass({
 composer.addPass(renderPass);
 composer.addPass(pencilLinesPass);
 
-const stripGroup = new StripGroup(size);
-scene.add(stripGroup.getMesh());
+const stripGroup: StripGroup = new StripGroup(size);
+stripGroup.geometry = stripGroup.buildStripGroup();
+scene.add(stripGroup.geometry);
 
 // scene.add(new THREE.Mesh(
 //     new THREE.TorusGeometry( 5, 2, 16, 100 ),
@@ -81,7 +83,7 @@ scene.add(pointLight);
 
 camera.position.set(0, 0, 15);
 
-stripGroup.getMesh().rotateX(-.8);
+stripGroup.geometry.rotateX(-.8);
 
 
 const timer = new THREE.Timer();
@@ -98,8 +100,7 @@ function animate(time: number) {
     const stepRotation = timeStep * rotationScale;
     const totalRotation = totalTime * rotationScale;
 
-
-    stripGroup.getMesh().rotateZ(stepRotation);
+    stripGroup.geometry.rotateZ(stepRotation);
     
     stripGroup.wideStripMaterial.uniforms.u_time!.value = time;
     stripGroup.wideStripMaterial.uniforms.u_normalRotation!.value = new THREE.Matrix4()
