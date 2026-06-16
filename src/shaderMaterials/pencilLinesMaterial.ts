@@ -4,7 +4,7 @@ import vertexShader from '../shaders/pencilLines.vert?raw';
 
 const uniforms = {
     tDiffuse: { value: null},
-    uResolution: { value: new THREE.Vector2(1, 1)},
+    u_resolution: { value: new THREE.Vector2(1, 1)},
     uNormals: {value: new THREE.Vector3(1, 1, 1)}
 };
 

@@ -41,7 +41,7 @@ export class PencilLinesPass extends Pass {
         this.material = new PencilLinesMaterial;
         this.fsQuad = new FullScreenQuad(this.material);
 
-        this.material.uniforms.uResolution!.value = new THREE.Vector2(width, height);
+        this.material.uniforms.u_resolution!.value = new THREE.Vector2(width, height);
     }
 
     render(
