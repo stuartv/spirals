@@ -7,6 +7,7 @@ import myCustomNoise from './shaders/chunks/myCustomNoise.glsl?raw';
 THREE.ShaderChunk['myCustomNoise'] = myCustomNoise;
 
 import { StripGroup } from './geometry/stripGroup';
+
 import { PencilLinesPass } from './passes/pencilLinesPass';
 
 import { BackgroundMaterial } from './shaderMaterials/backgroundMaterial';
@@ -98,7 +99,7 @@ function animate(time: number) {
     stripGroup.wideStripMaterial.uniforms.u_normalRotation!.value = new THREE.Matrix4()
         .makeRotationZ(-totalRotation);
 
-    const lightVector = new THREE.Vector3(.6, -.8, -.2).normalize()
+    const lightVector = new THREE.Vector3(.4, -.8, -.1).normalize()
         .applyAxisAngle(new THREE.Vector3(0,0,1), -totalRotation);
 
     stripGroup.wideStripMaterial.uniforms.u_lightVec!.value = lightVector;
