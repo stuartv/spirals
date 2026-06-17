@@ -8,13 +8,13 @@ varying vec2 vUv;
 
 #include <myCustomNoise>
 
-void main() {    
-    float numLines = 300.0;
+void main() {
+    float numLines = 600.0;
 
     vec3 normalized = normalize(vNormal);
     vec3 source = normalize(u_lightVec);
     float stripeWidth = length(normalized + source) / 2.0;
-    stripeWidth =  mix(.99, .03, pow(stripeWidth, 2.5));
+    stripeWidth =  mix(.03, .99, pow(stripeWidth, 2.5));
 
     float isStripe = step(fract(vUv.y * numLines), stripeWidth);
     if (isStripe > .5) {

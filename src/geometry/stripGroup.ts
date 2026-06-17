@@ -4,10 +4,10 @@ import { ThinStripMaterial } from '../shaderMaterials/thinStripMaterial';
 
 export class StripGroup {
     private geometry?: THREE.Group;
-    wideStripMaterial: WideStripMaterial;
-    thinStripMaterial: ThinStripMaterial;
+    wideStripMaterial: THREE.Material;
+    thinStripMaterial: THREE.Material;
     private stripWidth = .2;
-    private stripThickness = .4;
+    private stripThickness = .25;
     private numStrips = 4;
     private revolutions = 1.5;
     private fidelity = .001;
@@ -38,7 +38,7 @@ export class StripGroup {
             new THREE.Vector3(0, 0, w),
             new THREE.Vector3(t, 0, w),
             new THREE.Vector3(t, 0, 0)];
-
+        
         const stripGroup = new THREE.Group();
         for (let stripIndex=0; stripIndex<this.numStrips; stripIndex++) {
             const phiShift = Math.PI*2 / this.numStrips * stripIndex;
@@ -47,7 +47,14 @@ export class StripGroup {
                     new THREE.Vector3(0, phiShift, 0)
                         .add(stripShifts[j]!),
                     new THREE.Vector3(0, phiShift, 0)
-                        .add(stripShifts[(j+1) % stripShifts.length]!));
+                        .add(stripShifts[(j+1) % stripShifts.length]!),
+                    j == 0
+                    );
+
+                // Override busted normal calculation
+                if (j % 2 == 1){
+                    geometry.computeVertexNormals();
+                }
 
                 const material = j % 2 == 0
                     ? this.wideStripMaterial
@@ -102,8 +109,11 @@ export class StripGroup {
     private strip(
         shift1: THREE.Vector3,
         shift2: THREE.Vector3,
+        flipNormal: boolean
     ): THREE.BufferGeometry {
-        const tubeShift = new THREE.Vector3(1, 0, 0);
+        const tubeShift = flipNormal
+            ? new THREE.Vector3(-1, 0, 0)
+            : new THREE.Vector3(1, 0, 0);
 
         const points = [];
         const normals: THREE.Vector3[] = [];
