@@ -3,15 +3,22 @@ import { WideStripMaterial } from '../shaderMaterials/wideStripMaterial';
 import { ThinStripMaterial } from '../shaderMaterials/thinStripMaterial';
 
 export class StripGroup {
-    private screenSize: THREE.Vector2;
     private geometry?: THREE.Group;
     wideStripMaterial: WideStripMaterial;
     thinStripMaterial: ThinStripMaterial;
+    stripWidth = .2;
+    stripThickness = .4;
+    numStrips = 4;
+    revolutions = 1.5;
+    fidelity = .001;
+    radius = 5;
+    maxTube = 3;
+    freq = 4;
+
 
     constructor(
         screenSize: THREE.Vector2
     ){
-        this.screenSize = screenSize;
         this.wideStripMaterial = new WideStripMaterial(screenSize);
         this.thinStripMaterial = new ThinStripMaterial(screenSize);
     }
@@ -24,40 +31,31 @@ export class StripGroup {
     }
 
     buildStripGroup(): THREE.Group {
-        const stripGroup = new THREE.Group();
-
-        const stripWidth = .2;
-        const stripThickness = .4;
+        const w = this.stripWidth;
+        const t = this.stripThickness;
         const stripShifts = [
-            new THREE.Vector3(             0, 0,          0),
-            new THREE.Vector3(             0, 0, stripWidth),
-            new THREE.Vector3(stripThickness, 0, stripWidth),
-            new THREE.Vector3(stripThickness, 0,          0)
-        ];
+            new THREE.Vector3(0, 0, 0),
+            new THREE.Vector3(0, 0, w),
+            new THREE.Vector3(t, 0, w),
+            new THREE.Vector3(t, 0, 0)];
 
-        const wideStripMaterial = new WideStripMaterial(this.screenSize);
-        const thinStripMaterial = new ThinStripMaterial(this.screenSize);
-        const stripMaterials = [
-            wideStripMaterial,
-            thinStripMaterial,
-            wideStripMaterial,
-            thinStripMaterial
-        ]
-
-        const numStrips = 4;
-        for (let stripIndex=0; stripIndex<numStrips; stripIndex++) {
-            const phiShift = Math.PI*2 / numStrips * stripIndex;
+        const stripGroup = new THREE.Group();
+        for (let stripIndex=0; stripIndex<this.numStrips; stripIndex++) {
+            const phiShift = Math.PI*2 / this.numStrips * stripIndex;
             for (let j=0; j<stripShifts.length; j++){
-                stripGroup.add(new THREE.Mesh(
-                    this.strip(
-                        new THREE.Vector3(0, phiShift, 0)
-                            .add(stripShifts[j]!),
-                        new THREE.Vector3(0, phiShift, 0)
-                            .add(stripShifts[(j+1) % stripShifts.length]!)),
-                    stripMaterials[j]));
+                const geometry = this.strip(
+                    new THREE.Vector3(0, phiShift, 0)
+                        .add(stripShifts[j]!),
+                    new THREE.Vector3(0, phiShift, 0)
+                        .add(stripShifts[(j+1) % stripShifts.length]!));
+
+                const material = j % 2 == 0
+                    ? this.wideStripMaterial
+                    : this.thinStripMaterial;
+
+                stripGroup.add(new THREE.Mesh(geometry, material));
             }
         }
-
         return stripGroup;
     }
 
@@ -105,14 +103,13 @@ export class StripGroup {
         shift1: THREE.Vector3,
         shift2: THREE.Vector3,
     ): THREE.BufferGeometry {
-        const revolutions = 1.5;
-        const fidelity = .001;
+        
 
         const tubeShift = new THREE.Vector3(1, 0, 0);
 
         const points = [];
         const normals: THREE.Vector3[] = [];
-        for (let i=0; i<Math.PI*2 * revolutions; i+=fidelity) {
+        for (let i=0; i<Math.PI*2 * this.revolutions; i+=this.fidelity) {
             const pt1 = this.spiralPoint(i, shift1)
             const pt2 = this.spiralPoint(i, shift2);
             points.push(pt1);
@@ -129,12 +126,8 @@ export class StripGroup {
         theta: number,
         shift: THREE.Vector3 = new THREE.Vector3()
     ): THREE.Vector3 {
-        const radius = 5;
-        const maxTube = 3;
-        const freq = 4;
-
         // shrink factor
-        const tube = maxTube - (.35 * theta);
+        const tube = this.maxTube - (.35 * theta);
 
         const tubeShift = shift.x;
         const phiShift = shift.y;
@@ -146,12 +139,12 @@ export class StripGroup {
         return new THREE.Vector3(tube + tubeShift, 0, 0)
             .applyAxisAngle(
                 zAxis,
-                (theta * freq) + phiShift)
+                (theta * this.freq) + phiShift)
             .applyAxisAngle(
                 xAxis,
                 Math.PI / 2)
             .add(
-                new THREE.Vector3(radius, 0, 0))
+                new THREE.Vector3(this.radius, 0, 0))
             .applyAxisAngle(
                 zAxis,
                 theta + thetaShift);
