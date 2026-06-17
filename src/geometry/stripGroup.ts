@@ -23,7 +23,7 @@ export class StripGroup {
         this.thinStripMaterial = new ThinStripMaterial(screenSize);
     }
 
-    getGeometry(): THREE.Group {
+    getMesh(): THREE.Group {
         if (!this.geometry){
             this.geometry = this.buildStripGroup();
         }

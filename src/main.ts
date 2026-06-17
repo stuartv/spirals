@@ -13,6 +13,10 @@ import { PencilLinesPass } from './passes/pencilLinesPass';
 import { BackgroundMaterial } from './shaderMaterials/backgroundMaterial';
 import { WideStripMaterial } from './shaderMaterials/wideStripMaterial';
 
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
+import { PerspectiveDepthMaterial } from './shaderMaterials/perspectiveDepth';
+
 const size = new THREE.Vector2(
     window.innerWidth,
     window.innerHeight
@@ -23,9 +27,9 @@ const camera = new THREE.PerspectiveCamera(
     75,
     size.x / size.y,
     0.1,
-    1000);
+    100);
 
-const renderer = new THREE.WebGLRenderer({});
+const renderer = new THREE.WebGLRenderer();
 renderer.setSize(size.x, size.y);
 document.body.appendChild( renderer.domElement );
 const controls = new OrbitControls( camera, renderer.domElement );
@@ -40,10 +44,17 @@ const pencilLinesPass = new PencilLinesPass({
 });
 
 composer.addPass(renderPass);
+
+// Setup and add FXAA (Anti-alising)
+// const fxaaPass = new ShaderPass(FXAAShader);
+// fxaaPass.uniforms['resolution'].value.x = 1 / (size.x * renderer.getPixelRatio());
+// fxaaPass.uniforms['resolution'].value.y = 1 / (size.y * renderer.getPixelRatio());
+// composer.addPass(fxaaPass);
+
 composer.addPass(pencilLinesPass);
 
 const stripGroup: StripGroup = new StripGroup(size);
-scene.add(stripGroup.getGeometry());
+scene.add(stripGroup.getMesh());
 
 // scene.add(new THREE.Mesh(
 //     new THREE.TorusGeometry( 5, 2, 16, 100 ),
@@ -76,7 +87,7 @@ scene.add(pointLight);
 
 camera.position.set(0, 0, 15);
 
-stripGroup.getGeometry().rotateX(-.8);
+stripGroup.getMesh().rotateX(-.8);
 
 
 const timer = new THREE.Timer();
@@ -93,7 +104,7 @@ function animate(time: number) {
     const stepRotation = timeStep * rotationScale;
     const totalRotation = totalTime * rotationScale;
 
-    stripGroup.getGeometry().rotateZ(stepRotation);
+    stripGroup.getMesh().rotateZ(stepRotation);
     
     stripGroup.wideStripMaterial.uniforms.u_time!.value = time;
     stripGroup.wideStripMaterial.uniforms.u_normalRotation!.value = new THREE.Matrix4()

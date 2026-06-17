@@ -1,6 +1,7 @@
 uniform sampler2D tDiffuse;
 uniform vec2 u_resolution;
 uniform sampler2D uNormals;
+uniform sampler2D tDepth;
 varying vec2 vUv;
 
 #include <myCustomNoise>
@@ -18,6 +19,10 @@ float diffuseValue(int x, int y) {
 float normalValue(int x, int y) {
     return valueAtPoint(uNormals, vUv, vec2(1.0 / u_resolution.x, 1.0 / u_resolution.y), vec2(x, y)) * 0.3;
 }
+
+// float depthValue(int x, int y) {
+//     // return texture2D(tDepth, )
+// }
 
 float getValue(int x, int y) {
     return normalValue(x, y); //+ diffuseValue(x, y);

@@ -35,7 +35,7 @@ float ramp(vec2 p, vec2 scale, float minVal, float maxVal) {
 }
 
 void setColor(float value) {
-    vec3 paperColor = vec3(.945, .910, .746);
+    vec3 paperColor = vec3(.844, .778, .691);
     vec3 darkest    = vec3(.0,   .0,   .0);
     gl_FragColor = vec4(mix(vec3(darkest), vec3(paperColor), value), 1.0);
 }
