@@ -10,11 +10,9 @@ varying vec2 vUv;
 #include <myCustomNoise>
 
 void main() {
-    // vec2 p = vUv.xy;
-    // vec2 p = vec2(sin(gl_FragCoord.x), sin(gl_FragCoord.y));
     vec2 p = vec2(
-        gl_FragCoord.x / min(u_resolution.x, u_resolution.y),
-        gl_FragCoord.y / min(u_resolution.x, u_resolution.y)
+        gl_FragCoord.x / u_resolution.x,
+        gl_FragCoord.y / u_resolution.y
         );
 
 
