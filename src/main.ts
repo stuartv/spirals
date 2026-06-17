@@ -3,14 +3,14 @@ import { EffectComposer, RenderPass } from 'three/examples/jsm/Addons.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 import myCustomNoise from './shaders/chunks/myCustomNoise.glsl?raw';
+// @ts-expect-error
 THREE.ShaderChunk['myCustomNoise'] = myCustomNoise;
 
 import { StripGroup } from './geometry/stripGroup';
-
-import wideStripVertexShader from './shaders/wideStrip.vert?raw';
-import planeFragmentShader from './shaders/plane.frag?raw';
-
 import { PencilLinesPass } from './passes/pencilLinesPass';
+
+import { BackgroundMaterial } from './shaderMaterials/backgroundMaterial';
+import { WideStripMaterial } from './shaderMaterials/wideStripMaterial';
 
 const size = new THREE.Vector2(
     window.innerWidth,
@@ -59,18 +59,11 @@ scene.add(stripGroup.getGeometry());
 //     new THREE.MeshLambertMaterial({
 //         color: new THREE.Color(0,1,0)})));
 
-camera.add(new THREE.Mesh(
-    new THREE.PlaneGeometry(5000, 5000),
-    new THREE.ShaderMaterial({
-        uniforms: {
-            u_resolution: {
-                value: size
-            }
-        },
-        vertexShader: wideStripVertexShader,
-        fragmentShader: planeFragmentShader,
-        depthWrite: false
-    })).translateZ(camera.far * -.99));
+camera
+    .add(new THREE.Mesh(
+        new THREE.PlaneGeometry(5000, 5000),
+        new BackgroundMaterial(size))
+    .translateZ(camera.far * -.99));
 
 scene.add(camera);
 

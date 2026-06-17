@@ -6,14 +6,14 @@ export class StripGroup {
     private geometry?: THREE.Group;
     wideStripMaterial: WideStripMaterial;
     thinStripMaterial: ThinStripMaterial;
-    stripWidth = .2;
-    stripThickness = .4;
-    numStrips = 4;
-    revolutions = 1.5;
-    fidelity = .001;
-    radius = 5;
-    maxTube = 3;
-    freq = 4;
+    private stripWidth = .2;
+    private stripThickness = .4;
+    private numStrips = 4;
+    private revolutions = 1.5;
+    private fidelity = .001;
+    private radius = 5;
+    private maxTube = 3;
+    private freq = 4;
 
 
     constructor(
