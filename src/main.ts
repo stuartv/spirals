@@ -42,8 +42,7 @@ composer.addPass(renderPass);
 composer.addPass(pencilLinesPass);
 
 const stripGroup: StripGroup = new StripGroup(size);
-stripGroup.geometry = stripGroup.buildStripGroup();
-scene.add(stripGroup.geometry);
+scene.add(stripGroup.getGeometry());
 
 // scene.add(new THREE.Mesh(
 //     new THREE.TorusGeometry( 5, 2, 16, 100 ),
@@ -83,7 +82,7 @@ scene.add(pointLight);
 
 camera.position.set(0, 0, 15);
 
-stripGroup.geometry.rotateX(-.8);
+stripGroup.getGeometry().rotateX(-.8);
 
 
 const timer = new THREE.Timer();
@@ -100,7 +99,7 @@ function animate(time: number) {
     const stepRotation = timeStep * rotationScale;
     const totalRotation = totalTime * rotationScale;
 
-    stripGroup.geometry.rotateZ(stepRotation);
+    stripGroup.getGeometry().rotateZ(stepRotation);
     
     stripGroup.wideStripMaterial.uniforms.u_time!.value = time;
     stripGroup.wideStripMaterial.uniforms.u_normalRotation!.value = new THREE.Matrix4()

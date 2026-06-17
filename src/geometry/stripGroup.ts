@@ -4,7 +4,7 @@ import { ThinStripMaterial } from '../shaderMaterials/thinStripMaterial';
 
 export class StripGroup {
     private screenSize: THREE.Vector2;
-    geometry: THREE.Group;
+    private geometry?: THREE.Group;
     wideStripMaterial: WideStripMaterial;
     thinStripMaterial: ThinStripMaterial;
 
@@ -14,6 +14,13 @@ export class StripGroup {
         this.screenSize = screenSize;
         this.wideStripMaterial = new WideStripMaterial(screenSize);
         this.thinStripMaterial = new ThinStripMaterial(screenSize);
+    }
+
+    getGeometry(): THREE.Group {
+        if (!this.geometry){
+            this.geometry = this.buildStripGroup();
+        }
+        return this.geometry;
     }
 
     buildStripGroup(): THREE.Group {
