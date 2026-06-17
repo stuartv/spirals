@@ -45,7 +45,7 @@ void main() {
         theta / (2.0 * PI) + .5,
         phi / PI);
     
-    float gridNumX = 90.0;
+    float gridNumX = 150.0;
     float gridNumY = 45.0;
     
 	vec2 squareCenter = vec2(

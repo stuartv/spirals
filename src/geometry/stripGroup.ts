@@ -11,8 +11,8 @@ export class StripGroup {
     private numStrips = 4;
     private revolutions = 1.5;
     private fidelity = .001;
-    private radius = 5;
-    private maxTube = 3;
+    private radius = 6;
+    private maxTube = 2.5;
     private freq = 4;
 
 
@@ -103,15 +103,22 @@ export class StripGroup {
         shift1: THREE.Vector3,
         shift2: THREE.Vector3,
     ): THREE.BufferGeometry {
-        
-
         const tubeShift = new THREE.Vector3(1, 0, 0);
 
         const points = [];
         const normals: THREE.Vector3[] = [];
-        for (let i=0; i<Math.PI*2 * this.revolutions; i+=this.fidelity) {
-            const pt1 = this.spiralPoint(i, shift1)
-            const pt2 = this.spiralPoint(i, shift2);
+        const totalAngle = Math.PI*2 * this.revolutions;
+        for (let i=0; i<totalAngle; i+=this.fidelity) {
+            const pt1 = this.spiralPoint(i, new THREE.Vector3(
+                shift1.x * (1 - i / totalAngle),
+                shift1.y,
+                shift1.z
+            ));
+            const pt2 = this.spiralPoint(i, new THREE.Vector3(
+                shift2.x * (1 - i / totalAngle),
+                shift2.y,
+                shift2.z
+            ));
             points.push(pt1);
             points.push(pt2);
 
