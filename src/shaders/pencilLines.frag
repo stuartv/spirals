@@ -17,15 +17,15 @@ float diffuseValue(int x, int y) {
 }
 
 float normalValue(int x, int y) {
-    return valueAtPoint(uNormals, vUv, vec2(1.0 / u_resolution.x, 1.0 / u_resolution.y), vec2(x, y)) * 0.3;
+    return valueAtPoint(uNormals, vUv, vec2(1.0 / u_resolution.x, 1.0 / u_resolution.y), vec2(x, y)) * 0.05;
 }
 
-// float depthValue(int x, int y) {
-//     // return texture2D(tDepth, )
-// }
+float depthValue(int x, int y) {
+     return valueAtPoint(tDepth, vUv, vec2(1.0 / u_resolution.x, 1.0 / u_resolution.y), vec2(x, y)) * 5.0;
+}
 
 float getValue(int x, int y) {
-    return normalValue(x, y); //+ diffuseValue(x, y);
+    return depthValue(x, y) + normalValue(x, y);
 }
 
 float combinedSobelValue() {
@@ -73,7 +73,5 @@ void main() {
         blackInk();
     } else {
         gl_FragColor = texture2D(tDiffuse, vUv);
-        // gl_FragColor = vec4(1.0);
-        // gl_FragColor = texture2D(uNormals, vUv);
     }
 }
