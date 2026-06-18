@@ -141,7 +141,7 @@ export class StripGroup {
         const points = [];
         const normals: THREE.Vector3[] = [];
         const totalAngle = Math.PI*2 * this.revolutions;
-        for (let i=0; i<totalAngle; i+=this.fidelity) {
+        for (let i=-.2; i<totalAngle; i+=this.fidelity) {
             const pt1 = this.spiralPoint(i, new THREE.Vector3(
                 shift1.x * (1 - i / totalAngle),
                 shift1.y,
@@ -166,7 +166,6 @@ export class StripGroup {
         theta: number,
         shift: THREE.Vector3 = new THREE.Vector3()
     ): THREE.Vector3 {
-
         // shrink factor
         const tube = this.maxTube - (.35 * theta);
 
@@ -188,6 +187,6 @@ export class StripGroup {
                 new THREE.Vector3(this.radius, 0, 0))
             .applyAxisAngle(
                 zAxis,
-                theta + thetaShift);
+                Math.max(0, theta + thetaShift));
     }
 }
