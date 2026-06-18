@@ -4,8 +4,8 @@ import { ThinStripMaterial } from '../shaderMaterials/thinStripMaterial';
 
 export class StripGroup {
     private geometry?: THREE.Group;
-    wideStripMaterial: THREE.Material;
-    thinStripMaterial: THREE.Material;
+    private wideStripMaterial: WideStripMaterial;
+    private thinStripMaterial: ThinStripMaterial;
     private stripWidth = .2;
     private stripThickness = .25;
     private numStrips = 4;
@@ -14,7 +14,6 @@ export class StripGroup {
     private radius = 6;
     private maxTube = 2.5;
     private freq = 4;
-
 
     constructor(
         screenSize: THREE.Vector2
@@ -64,6 +63,30 @@ export class StripGroup {
             }
         }
         return stripGroup;
+    }
+
+    animate({
+        time,
+        timeStepDuration
+    }:{
+        time: number,
+        timeStepDuration: number
+    }) {
+        const rotationScale = .5;
+        const stepRotation = timeStepDuration * rotationScale;
+        const totalRotation = time * rotationScale;
+    
+        this.getMesh().rotateZ(stepRotation);
+        
+        this.wideStripMaterial.uniforms.u_time!.value = time;
+        this.wideStripMaterial.uniforms.u_normalRotation!.value = new THREE.Matrix4()
+            .makeRotationZ(-totalRotation);
+    
+        const lightVector = new THREE.Vector3(.4, -.8, -.1).normalize()
+            .applyAxisAngle(new THREE.Vector3(0,0,1), -totalRotation);
+    
+        this.wideStripMaterial.uniforms.u_lightVec!.value = lightVector;
+        this.thinStripMaterial.uniforms.u_lightVec!.value = lightVector;
     }
 
     private quadStrip(
@@ -143,6 +166,7 @@ export class StripGroup {
         theta: number,
         shift: THREE.Vector3 = new THREE.Vector3()
     ): THREE.Vector3 {
+
         // shrink factor
         const tube = this.maxTube - (.35 * theta);
 

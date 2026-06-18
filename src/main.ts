@@ -2,20 +2,15 @@ import * as THREE from 'three';
 import { EffectComposer, RenderPass } from 'three/examples/jsm/Addons.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+import { StripGroup } from './geometry/stripGroup';
+import { BackgroundMaterial } from './shaderMaterials/backgroundMaterial';
 import myCustomNoise from './shaders/chunks/myCustomNoise.glsl?raw';
 // @ts-expect-error
 THREE.ShaderChunk['myCustomNoise'] = myCustomNoise;
 
-import { StripGroup } from './geometry/stripGroup';
-
 import { PencilLinesPass } from './passes/pencilLinesPass';
-
-import { BackgroundMaterial } from './shaderMaterials/backgroundMaterial';
-import { WideStripMaterial } from './shaderMaterials/wideStripMaterial';
-
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
-import { PerspectiveDepthMaterial } from './shaderMaterials/perspectiveDepth';
 
 const size = new THREE.Vector2(
     window.innerWidth,
@@ -55,6 +50,15 @@ composer.addPass(pencilLinesPass);
 
 const stripGroup: StripGroup = new StripGroup(size);
 scene.add(stripGroup.getMesh());
+stripGroup.getMesh().rotateX(-.8);
+
+camera
+    .add(new THREE.Mesh(
+        new THREE.PlaneGeometry(5000, 5000),
+        new BackgroundMaterial(size))
+    .translateZ(camera.far * -.99));
+
+scene.add(camera);
 
 // scene.add(new THREE.Mesh(
 //     new THREE.TorusGeometry( 5, 2, 16, 100 ),
@@ -71,13 +75,6 @@ scene.add(stripGroup.getMesh());
 //     new THREE.MeshLambertMaterial({
 //         color: new THREE.Color(0,1,0)})));
 
-camera
-    .add(new THREE.Mesh(
-        new THREE.PlaneGeometry(5000, 5000),
-        new BackgroundMaterial(size))
-    .translateZ(camera.far * -.99));
-
-scene.add(camera);
 
 const pointLight = new THREE.PointLight(
     new THREE.Color(255, 255, 255),
@@ -86,8 +83,6 @@ pointLight.position.set(10, 10, 10);
 scene.add(pointLight);
 
 camera.position.set(0, 0, 15);
-
-stripGroup.getMesh().rotateX(-.8);
 
 
 const timer = new THREE.Timer();
@@ -100,22 +95,10 @@ function animate(time: number) {
     const timeStep = timer.getElapsed() - lastTime;
     lastTime = totalTime;
 
-    const rotationScale = .5;
-    const stepRotation = timeStep * rotationScale;
-    const totalRotation = totalTime * rotationScale;
-
-    stripGroup.getMesh().rotateZ(stepRotation);
-    
-    stripGroup.wideStripMaterial.uniforms.u_time!.value = time;
-    stripGroup.wideStripMaterial.uniforms.u_normalRotation!.value = new THREE.Matrix4()
-        .makeRotationZ(-totalRotation);
-
-    const lightVector = new THREE.Vector3(.4, -.8, -.1).normalize()
-        .applyAxisAngle(new THREE.Vector3(0,0,1), -totalRotation);
-
-    stripGroup.wideStripMaterial.uniforms.u_lightVec!.value = lightVector;
-    stripGroup.thinStripMaterial.uniforms.u_lightVec!.value = lightVector;
-
+    stripGroup.animate({
+        time: totalTime,
+        timeStepDuration: timeStep
+    });
 
     composer.render();
 }
