@@ -10,7 +10,7 @@ export class StripGroup {
     private stripThickness = .25;
     private numStrips = 4;
     private revolutions = 1.5;
-    private fidelity = .001;
+    private numTicks = 5000;
     private radius = 6;
     private maxTube = 2.5;
     private freq = 4;
@@ -100,13 +100,17 @@ export class StripGroup {
 
         geometry.setAttribute('position',
             new THREE.BufferAttribute(
-                new Float32Array(points.flatMap(point => point.toArray())),
-                positionElementSize));
+                new Float32Array(
+                    points.flatMap(point => point.toArray())),
+                    positionElementSize)
+                    .setUsage(THREE.DynamicDrawUsage));
 
         geometry.setAttribute('normal',
             new THREE.BufferAttribute(
-                new Float32Array(normals.flatMap(normal => normal.toArray())),
-                normalElementSize));
+                new Float32Array(
+                    normals.flatMap(normal => normal.toArray())),
+                    normalElementSize
+                ).setUsage(THREE.DynamicDrawUsage));
 
         geometry.setAttribute('uv',
             new THREE.BufferAttribute(
@@ -141,7 +145,10 @@ export class StripGroup {
         const points = [];
         const normals: THREE.Vector3[] = [];
         const totalAngle = Math.PI*2 * this.revolutions;
-        for (let i=-.2; i<totalAngle; i+=this.fidelity) {
+
+        for (let bigI=0; bigI<this.numTicks; bigI++){
+            const i = -.2 + bigI / this.numTicks * totalAngle;
+
             const pt1 = this.spiralPoint(i, new THREE.Vector3(
                 shift1.x * (1 - i / totalAngle),
                 shift1.y,

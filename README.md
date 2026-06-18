@@ -1,7 +1,6 @@
 TODO
-- Use depth buffer to improve outlines
+- Cleaner geometry faces
 - Consider using fractal noise
-- Fix edge geometry
 - Handle canvas resize
 - Animate the geometry
 
