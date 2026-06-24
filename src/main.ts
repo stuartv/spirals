@@ -48,7 +48,10 @@ composer.addPass(renderPass);
 
 composer.addPass(pencilLinesPass);
 
-const stripGroup: StripGroup = new StripGroup(size);
+const stripGroup: StripGroup = new StripGroup({
+    screenSize: size,
+    numRibbons: 4,
+    numTicks: 5000});
 scene.add(stripGroup.getMesh());
 stripGroup.getMesh().rotateX(-.8);
 

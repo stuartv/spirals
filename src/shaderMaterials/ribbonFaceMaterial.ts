@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import fragmentShader from '../shaders/wideStrip.frag?raw';
-import vertexShader from '../shaders/wideStrip.vert?raw';
+import fragmentShader from '../shaders/ribbonFace.frag?raw';
+import vertexShader from '../shaders/ribbonFace.vert?raw';
 
 const uniforms = {
     u_resolution: {
