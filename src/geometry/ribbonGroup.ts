@@ -51,15 +51,17 @@ export class RibbonGroup {
         const stepRotation = timeStepDuration * rotationScale;
         const totalRotation = time * rotationScale;
 
-        this.ribbons[0]?.update({
-            twist: () => 0,
-            width: () => this.ribbonWidth,
-            height: () => this.ribbonThickness,
-            r1: () => this.radius,
-            r2: (t: number) => this.maxTube - (.35 * t * 2 * Math.PI),
-            phi: (t: number) => t * this.freq * 2 * Math.PI,
-            theta: (t: number) => t * 2 * Math.PI * this.revolutions
-        });
+        for (let i=0; i<this.ribbons.length; i++) {
+            this.ribbons[i]?.update({
+                twist: () => 0,
+                width: () => this.ribbonWidth,
+                height: () => this.ribbonThickness,
+                r1: () => this.radius,
+                r2: (t: number) => this.maxTube - (.35 * t * 2 * Math.PI),
+                phi: (t: number) => t * this.freq * 2 * Math.PI * (1.5 + .7 * Math.sin(time)),
+                theta: (t: number) => t * 2 * Math.PI * this.revolutions + i
+            });
+        }
         
         this.getMesh().rotateZ(stepRotation);
         

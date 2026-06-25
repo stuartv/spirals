@@ -7,7 +7,7 @@ export class QuadStrip {
 
     constructor(numTicks: number) {
         this.numTicks = numTicks;
-        this.bufferGeometry = this.genQuadStrip(numTicks);
+        this.bufferGeometry = this.genQuadStrip();
     }
 
     getPositions(): Float32Array {
@@ -18,8 +18,8 @@ export class QuadStrip {
         return this.bufferGeometry;
     }
 
-    private genIndexes(numTicks: number): number[] {
-        const numQuads = numTicks - 1;
+    private genIndexes(): number[] {
+        const numQuads = this.numTicks - 1;
         const indexes: number[] = [];
         for (let i=0; i<numQuads*2; i+=2) {
             indexes.push(
@@ -29,53 +29,34 @@ export class QuadStrip {
         return indexes;
     }
     
-    private genUvs(numTicks: number): THREE.BufferAttribute {
+    private genUvs(): THREE.BufferAttribute {
         const uvElementSize = 2;
         return new THREE.BufferAttribute(
             new Float32Array(
-                Array(2 * numTicks).fill(0).flatMap((_, i) => 
+                Array(2 * this.numTicks).fill(0).flatMap((_, i) => 
                 [
                     i % 2,
-                    Math.floor(i / 2) / (numTicks / 2)
+                    Math.floor(i / 2) / (this.numTicks / 2)
                 ])),
             uvElementSize)
     }
 
-    private genPositions(numTicks: number): THREE.BufferAttribute {
+    private genPositions(): THREE.BufferAttribute {
         const positionElementSize = 3;
         this.positions = new Float32Array(
-            Array(numTicks).fill(0).flatMap(
-                () => Array(2 * positionElementSize).fill(0)));
+            Array(2 * this.numTicks * positionElementSize).fill(0));
 
         return new THREE.BufferAttribute(this.positions, positionElementSize);
     }
-    
-    // TODO: Use the autogen feature instead?
-    private genNormals(numTicks: number): THREE.BufferAttribute {
-        const normalElementSize = 3;
-        return new THREE.BufferAttribute(
-            new Float32Array(
-                Array(numTicks).fill(0).flatMap(
-                    () => Array(2 * normalElementSize).fill(0)
-                )
-            ),
-            normalElementSize
-        );
-    }
 
-    private genQuadStrip(numTicks: number): THREE.BufferGeometry {
+    private genQuadStrip(): THREE.BufferGeometry {
         const geometry = new THREE.BufferGeometry();
-
         geometry.setAttribute('position',
-            this.genPositions(numTicks)
+            this.genPositions()
                 .setUsage(THREE.DynamicDrawUsage));
-
         geometry.computeVertexNormals();
-        
-        geometry.setAttribute('uv', this.genUvs(numTicks));
-
-        geometry.setIndex(this.genIndexes(numTicks));
-
+        geometry.setAttribute('uv', this.genUvs());
+        geometry.setIndex(this.genIndexes());
         return geometry;
     }
 };

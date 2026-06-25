@@ -55,6 +55,10 @@ export class Ribbon {
                 phi: phi(t),
                 theta: theta(t)});
         }
+        
+        this.quadStrips.forEach(quadStrip => {
+            quadStrip.getBufferGeometry().getAttribute('position').needsUpdate = true;
+        });
     }
 
     private updateTick(tick: number, {twist, width, height, r1, r2, phi, theta}:{

@@ -51,7 +51,7 @@ composer.addPass(pencilLinesPass);
 const ribbonGroup: RibbonGroup = new RibbonGroup({
     screenSize: size,
     numRibbons: 4,
-    numTicks: 50});
+    numTicks: 250});
 scene.add(ribbonGroup.getMesh());
 ribbonGroup.getMesh().rotateX(-.8);
 
