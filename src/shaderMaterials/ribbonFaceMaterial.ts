@@ -20,7 +20,7 @@ const uniforms = {
     }
 };
 
-export class WideStripMaterial extends THREE.ShaderMaterial {
+export class RibbonFaceMaterial extends THREE.ShaderMaterial {
     constructor(u_resolution: THREE.Vector2) {
         super({uniforms, fragmentShader, vertexShader});
         

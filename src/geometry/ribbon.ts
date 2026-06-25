@@ -35,7 +35,7 @@ export class Ribbon {
         return this.group;
     }
 
-    update(tick: number, {twist, width, height, r1, r2, phi, theta}:{
+    update({twist, width, height, r1, r2, phi, theta}:{
         twist: (t: number) => number,
         width: (t: number) => number,
         height: (t: number) => number,
@@ -44,8 +44,8 @@ export class Ribbon {
         phi: (t: number) => number,
         theta: (t: number) => number
     }): void {
-        for (let i=0; i<this.numTicks; i++){
-            const t = i / this.numTicks;
+        for (let tick=0; tick<this.numTicks; tick++){
+            const t = tick / this.numTicks;
             this.updateTick(tick, {
                 twist: twist(t),
                 width: width(t),
@@ -67,10 +67,11 @@ export class Ribbon {
         theta: number
     }): void {
         const points: THREE.Vector3[] = [
-            this.toroidalToCartesian({r1, r2            , phi, theta                }),
-            this.toroidalToCartesian({r1, r2: r2 + width, phi, theta                }),
+            this.toroidalToCartesian({r1, r2            , phi, theta: theta + height}),
             this.toroidalToCartesian({r1, r2: r2 + width, phi, theta: theta + height}),
-            this.toroidalToCartesian({r1, r2            , phi, theta: theta + height})];
+            this.toroidalToCartesian({r1, r2: r2 + width, phi, theta                }),
+            this.toroidalToCartesian({r1, r2            , phi, theta                }),
+        ];
 
         const elementSize = 3;
         const numStrips = 4;

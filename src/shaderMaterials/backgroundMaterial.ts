@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import vertexShader from '../shaders/wideStrip.vert?raw';
+import vertexShader from '../shaders/ribbonEdge.vert?raw';
 import fragmentShader from '../shaders/plane.frag?raw';
 
 const uniforms = {

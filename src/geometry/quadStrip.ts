@@ -33,7 +33,7 @@ export class QuadStrip {
         const uvElementSize = 2;
         return new THREE.BufferAttribute(
             new Float32Array(
-                Array(numTicks).fill(0).flatMap((_, i) => 
+                Array(2 * numTicks).fill(0).flatMap((_, i) => 
                 [
                     i % 2,
                     Math.floor(i / 2) / (numTicks / 2)
@@ -42,11 +42,11 @@ export class QuadStrip {
     }
 
     private genPositions(numTicks: number): THREE.BufferAttribute {
+        const positionElementSize = 3;
         this.positions = new Float32Array(
             Array(numTicks).fill(0).flatMap(
-                () => Array(positionElementSize).fill(0)));
+                () => Array(2 * positionElementSize).fill(0)));
 
-        const positionElementSize = 3;
         return new THREE.BufferAttribute(this.positions, positionElementSize);
     }
     
@@ -56,7 +56,7 @@ export class QuadStrip {
         return new THREE.BufferAttribute(
             new Float32Array(
                 Array(numTicks).fill(0).flatMap(
-                    () => Array(normalElementSize).fill(0)
+                    () => Array(2 * normalElementSize).fill(0)
                 )
             ),
             normalElementSize
@@ -64,15 +64,18 @@ export class QuadStrip {
     }
 
     private genQuadStrip(numTicks: number): THREE.BufferGeometry {
-        return new THREE.BufferGeometry()
-            .setAttribute('position', this.genPositions(numTicks)
-            .setUsage(THREE.DynamicDrawUsage)
-        )
-            .setAttribute('normal', this.genNormals(numTicks)
-            .setUsage(THREE.DynamicDrawUsage)
-        )
-            .setAttribute('uv', this.genUvs(numTicks)
-        )
-            .setIndex(this.genIndexes(numTicks));
+        const geometry = new THREE.BufferGeometry();
+
+        geometry.setAttribute('position',
+            this.genPositions(numTicks)
+                .setUsage(THREE.DynamicDrawUsage));
+
+        geometry.computeVertexNormals();
+        
+        geometry.setAttribute('uv', this.genUvs(numTicks));
+
+        geometry.setIndex(this.genIndexes(numTicks));
+
+        return geometry;
     }
 };

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { EffectComposer, RenderPass } from 'three/examples/jsm/Addons.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-import { StripGroup } from './geometry/stripGroup';
+import { RibbonGroup } from './geometry/ribbonGroup';
 import { BackgroundMaterial } from './shaderMaterials/backgroundMaterial';
 import myCustomNoise from './shaders/chunks/myCustomNoise.glsl?raw';
 // @ts-expect-error
@@ -48,12 +48,12 @@ composer.addPass(renderPass);
 
 composer.addPass(pencilLinesPass);
 
-const stripGroup: StripGroup = new StripGroup({
+const ribbonGroup: RibbonGroup = new RibbonGroup({
     screenSize: size,
     numRibbons: 4,
-    numTicks: 5000});
-scene.add(stripGroup.getMesh());
-stripGroup.getMesh().rotateX(-.8);
+    numTicks: 50});
+scene.add(ribbonGroup.getMesh());
+ribbonGroup.getMesh().rotateX(-.8);
 
 camera
     .add(new THREE.Mesh(
@@ -98,7 +98,7 @@ function animate(time: number) {
     const timeStep = timer.getElapsed() - lastTime;
     lastTime = totalTime;
 
-    stripGroup.animate({
+    ribbonGroup.animate({
         time: totalTime,
         timeStepDuration: timeStep
     });
