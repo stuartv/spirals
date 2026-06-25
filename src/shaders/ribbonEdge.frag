@@ -9,7 +9,7 @@ varying vec2 vUv;
 #include <myCustomNoise>
 
 void main() {
-    float numLines = 600.0;
+    float numLines = 150.0;
 
     vec3 normalized = normalize(vNormal);
     vec3 source = normalize(u_lightVec);

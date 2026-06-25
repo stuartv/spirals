@@ -53,12 +53,12 @@ export class RibbonGroup {
         for (let i=0; i<this.ribbons.length; i++) {
             this.ribbons[i]?.update({
                 twist: () => 0,
-                width: () => this.ribbonWidth,
-                height: () => this.ribbonThickness,
+                width: (t: number) => this.ribbonWidth + .2 + .2 * Math.sin(10 * time + t * 20),
+                height: (t: number) => this.ribbonThickness + .05 * (1 + Math.cos(10 * time + t * 20)),
                 r1: () => this.radius,
                 r2: (t: number) => this.maxTube - (.35 * t * 2 * Math.PI),
-                phi: (t: number) => t * this.freq * 2 * Math.PI * (1.5 + .7 * Math.sin(time)),
-                theta: (t: number) => t * 2 * Math.PI * this.revolutions + i
+                phi: (t: number) => t * this.freq * 2 * Math.PI + (i * Math.PI / 2),
+                theta: (t: number) => t * 2 * Math.PI * this.revolutions
             });
         }
         

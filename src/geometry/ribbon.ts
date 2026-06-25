@@ -73,18 +73,14 @@ export class Ribbon {
         phi: number,
         theta: number
     }): void {
+        const w = width / 2;
+        const h = height / 2;
         const points: THREE.Vector3[] = [
-            this.toroidalToCartesian({r1, r2            , phi, theta: theta + height}),
-            this.toroidalToCartesian({r1, r2: r2 + width, phi, theta: theta + height}),
-            this.toroidalToCartesian({r1, r2: r2 + width, phi, theta                }),
-            this.toroidalToCartesian({r1, r2            , phi, theta                }),
+            this.toroidalToCartesian({r1, r2: r2 - w, phi, theta: theta + h}),
+            this.toroidalToCartesian({r1, r2: r2 + w, phi, theta: theta + h}),
+            this.toroidalToCartesian({r1, r2: r2 + w, phi, theta: theta - h}),
+            this.toroidalToCartesian({r1, r2: r2 - w, phi, theta: theta - h}),
         ];
-
-        const center = this.toroidalToCartesian({
-            r1,
-            r2: r2 + width / 2,
-            phi,
-            theta: theta + height / 2});
 
         const elementSize = 3;
         const numStrips = 4;
