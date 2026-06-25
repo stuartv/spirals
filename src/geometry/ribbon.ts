@@ -26,7 +26,9 @@ export class Ribbon {
             this.quadStrips.push(quadStrip);
             this.group.add(new THREE.Mesh(
                 quadStrip.getBufferGeometry(),
-                ribbonFaceMaterial  // TODO: Alternate materials
+                quadIdx % 2 == 0
+                  ? ribbonEdgeMaterial
+                  : ribbonFaceMaterial
             ));
         }
     }
@@ -55,9 +57,10 @@ export class Ribbon {
                 phi: phi(t),
                 theta: theta(t)});
         }
-        
+
         this.quadStrips.forEach(quadStrip => {
             quadStrip.getBufferGeometry().getAttribute('position').needsUpdate = true;
+            quadStrip.getBufferGeometry().getAttribute('normal').needsUpdate = true;
         });
     }
 
@@ -77,6 +80,12 @@ export class Ribbon {
             this.toroidalToCartesian({r1, r2            , phi, theta                }),
         ];
 
+        const center = this.toroidalToCartesian({
+            r1,
+            r2: r2 + width / 2,
+            phi,
+            theta: theta + height / 2});
+
         const elementSize = 3;
         const numStrips = 4;
         for (let i=0; i<numStrips; i++) {
@@ -84,6 +93,17 @@ export class Ribbon {
                 .set([
                     ...points[(i + 0) % numStrips]!.toArray(),
                     ...points[(i + 1) % numStrips]!.toArray()],
+                    2 * elementSize * tick);
+            
+            // TOOD: Modulo logic breaks when numStrips != 4
+            this.quadStrips[i]?.getNormals()
+                .set([
+                    ...points[(i + 0) % numStrips]!.clone().sub(
+                        points[(i + 3) % numStrips]!
+                    ).normalize(),
+                    ...points[(i + 1) % numStrips]!.clone().sub(
+                        points[(i + 2) % numStrips]!
+                    ).normalize()],
                     2 * elementSize * tick);
         }
     }

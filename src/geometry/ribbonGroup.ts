@@ -24,7 +24,6 @@ export class RibbonGroup {
         this.ribbonFaceMaterial = new RibbonFaceMaterial(screenSize);
         this.ribbonEdgeMaterial = new RibbonEdgeMaterial(screenSize);
 
-        // TODO: Probably need to clone some stuff to avoid pass by reference
         this.group = new THREE.Group();
         this.ribbons = [];
         for (let ribbonIdx=0; ribbonIdx<numRibbons; ribbonIdx++){

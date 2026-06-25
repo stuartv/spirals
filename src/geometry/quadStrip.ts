@@ -4,6 +4,7 @@ export class QuadStrip {
     private numTicks: number;
     private bufferGeometry: THREE.BufferGeometry;
     private positions!: Float32Array;
+    private normals!: Float32Array;
 
     constructor(numTicks: number) {
         this.numTicks = numTicks;
@@ -12,6 +13,10 @@ export class QuadStrip {
 
     getPositions(): Float32Array {
         return this.positions;
+    }
+
+    getNormals(): Float32Array {
+        return this.normals;
     }
 
     getBufferGeometry(): THREE.BufferGeometry {
@@ -46,15 +51,23 @@ export class QuadStrip {
         this.positions = new Float32Array(
             Array(2 * this.numTicks * positionElementSize).fill(0));
 
-        return new THREE.BufferAttribute(this.positions, positionElementSize);
+        return new THREE.BufferAttribute(this.positions, positionElementSize)
+            .setUsage(THREE.DynamicDrawUsage);
+    }
+
+    private genNormals(): THREE.BufferAttribute {
+        const normalElementSize = 3;
+        this.normals = new Float32Array(
+            Array(2 * this.numTicks * normalElementSize).fill(0));
+
+        return new THREE.BufferAttribute(this.normals, normalElementSize)
+            .setUsage(THREE.DynamicDrawUsage);
     }
 
     private genQuadStrip(): THREE.BufferGeometry {
         const geometry = new THREE.BufferGeometry();
-        geometry.setAttribute('position',
-            this.genPositions()
-                .setUsage(THREE.DynamicDrawUsage));
-        geometry.computeVertexNormals();
+        geometry.setAttribute('position', this.genPositions());
+        geometry.setAttribute('normal', this.genNormals());
         geometry.setAttribute('uv', this.genUvs());
         geometry.setIndex(this.genIndexes());
         return geometry;
