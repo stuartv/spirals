@@ -9,12 +9,6 @@ export class RibbonGroup {
 
     private ribbonFaceMaterial: RibbonFaceMaterial;
     private ribbonEdgeMaterial: RibbonEdgeMaterial;
-    private ribbonWidth = .2;
-    private ribbonThickness = .25;
-    private revolutions = 1.5;
-    private radius = 6;
-    private maxTube = 2.5;
-    private freq = 4;
 
     constructor({screenSize, numRibbons, numTicks}: {
         screenSize: THREE.Vector2,
@@ -53,12 +47,12 @@ export class RibbonGroup {
         for (let i=0; i<this.ribbons.length; i++) {
             this.ribbons[i]?.update({
                 twist: () => 0,
-                width: (t: number) => this.ribbonWidth + .2 + .2 * Math.sin(10 * time + t * 20),
-                height: (t: number) => this.ribbonThickness + .05 * (1 + Math.cos(10 * time + t * 20)),
-                r1: () => this.radius,
-                r2: (t: number) => this.maxTube - (.35 * t * 2 * Math.PI),
-                phi: (t: number) => t * this.freq * 2 * Math.PI + (i * Math.PI / 2),
-                theta: (t: number) => t * 2 * Math.PI * this.revolutions
+                width: (t: number) => .4 + .2 * Math.sin(10 * time + t * 20),
+                height: (t: number) => .25 + .05 * (1 + Math.cos(10 * time + t * 20)),
+                r1: () => 6,
+                r2: (t: number) => 2.5 - (.35 * t * 2 * Math.PI),
+                phi: (t: number) => t * 4 * 2 * Math.PI + (i * Math.PI / 2),
+                theta: (t: number) => t * 2 * Math.PI * 1.5
             });
         }
         
