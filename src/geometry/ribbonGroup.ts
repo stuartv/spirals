@@ -46,10 +46,10 @@ export class RibbonGroup {
 
         for (let i=0; i<this.ribbons.length; i++) {
             this.ribbons[i]?.update({
-                twist: () => 0,
-                width: (t: number) => .4 + .2 * Math.sin(10 * time + t * 20),
+                twist: (t: number) => 0,
+                width: (t: number) =>  .4 + .2 * Math.sin(10 * time + t * 20),
                 height: (t: number) => .25 + .05 * (1 + Math.cos(10 * time + t * 20)),
-                r1: () => 6,
+                r1: (t: number) => 6,
                 r2: (t: number) => 2.5 - (.35 * t * 2 * Math.PI),
                 phi: (t: number) => t * 4 * 2 * Math.PI + (i * Math.PI / 2),
                 theta: (t: number) => t * 2 * Math.PI * 1.5

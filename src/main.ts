@@ -8,6 +8,8 @@ import myCustomNoise from './shaders/chunks/myCustomNoise.glsl?raw';
 // @ts-expect-error
 THREE.ShaderChunk['myCustomNoise'] = myCustomNoise;
 
+import { InputInterface } from './inputInterface';
+
 import { PencilLinesPass } from './passes/pencilLinesPass';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
@@ -39,6 +41,12 @@ const pencilLinesPass = new PencilLinesPass({
 });
 
 composer.addPass(renderPass);
+// renderer.domElement.addEventListener("click", function(){
+//     console.log("Clicked");
+// });
+
+new InputInterface(renderer.domElement);
+
 
 // Setup and add FXAA (Anti-alising)
 // const fxaaPass = new ShaderPass(FXAAShader);
