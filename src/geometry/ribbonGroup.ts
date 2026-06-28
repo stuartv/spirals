@@ -3,6 +3,34 @@ import { RibbonFaceMaterial } from '../shaderMaterials/ribbonFaceMaterial';
 import { RibbonEdgeMaterial } from '../shaderMaterials/ribbonEdgeMaterial';
 import { Ribbon } from './ribbon';
 
+type AnimationInput = {
+    t: number;
+    i: number;
+    time: number;
+};
+
+type RibbonParams = {
+    width: number;
+    height: number;
+    r1: number;
+    r2: number;
+    phi: number;
+    theta: number;
+}
+
+type AnimationSetting<InParams, OutParams> = {
+    [K in keyof OutParams]: (input: InParams) => OutParams[K]
+}
+
+const mySetting: AnimationSetting<AnimationInput, RibbonParams> = {
+    width: ({t, time}) =>  .4 + .2 * Math.sin(10 * time + t * 20),
+    height: ({t, time}) => .25 + .05 * (1 + Math.cos(10 * time + t * 20)),
+    r1: ({}) => 6,
+    r2: ({t}) => 2.5 - (.35 * t * 2 * Math.PI),
+    phi: ({t, i}) => t * 4 * 2 * Math.PI + (i * Math.PI / 2),
+    theta: ({t}) => t * 2 * Math.PI * 1.5
+}
+
 export class RibbonGroup {
     private ribbons: Ribbon[];
     private group: THREE.Group;
