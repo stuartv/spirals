@@ -14,6 +14,7 @@ import { PencilLinesPass } from './passes/pencilLinesPass';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 import type { RibbonParams } from './geometry/ribbon';
+import { AnimationInterface } from './animationInterface';
 
 const size = new THREE.Vector2(
     window.innerWidth,
@@ -43,7 +44,7 @@ const pencilLinesPass = new PencilLinesPass({
 
 composer.addPass(renderPass);
 
-new InputInterface(renderer.domElement);
+const inputInterface = new InputInterface(renderer.domElement);
 
 
 // Setup and add FXAA (Anti-alising)
@@ -81,6 +82,9 @@ const timer = new THREE.Timer();
 timer.connect(document);
 let lastTime = timer.getElapsed();
 
+const animationInterface = new AnimationInterface();
+inputInterface.registerClickEvent(() => animationInterface.add(timer.getElapsed()));
+
 const mySetting: AnimationSetting<AnimationInput, RibbonParams> = {
     width: ({t, time}) =>  .4 + .2 * Math.sin(10 * time + t * 20),
     height: ({t, time}) => .25 + .05 * (1 + Math.cos(10 * time + t * 20)),
@@ -100,7 +104,7 @@ function animate(time: number) {
     ribbonGroup.animate({
         time: curTime,
         timeStepDuration,
-        animationSettings: mySetting
+        animationSettings: animationInterface.calculateSettings(curTime)
     });
 
     composer.render();

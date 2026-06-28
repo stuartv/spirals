@@ -6,12 +6,20 @@ type Point = {
 export type HandlerFunction = (arg: Point) => void;
 
 export class InputInterface {
+    private clickEvent: () => void = () => {
+        console.log("no click event assigned");
+    };
+
     private activeCanvas: HTMLCanvasElement;
     private start: Point = {x:0, y:0};
 
     constructor(activeCanvas: HTMLCanvasElement) {
         this.activeCanvas = activeCanvas;
         this.createEventTranslations();
+    }
+
+    registerClickEvent(event: () => void) {
+        this.clickEvent = event;
     }
 
     private down(e: MouseEvent | TouchEvent) {
@@ -25,7 +33,7 @@ export class InputInterface {
             Math.abs(end.y - this.start.y);
 
         if (amountMoved < 10) {
-            console.log('count it as a click'!);
+            this.clickEvent();
         } else {
             console.log('what a drag');
         }
