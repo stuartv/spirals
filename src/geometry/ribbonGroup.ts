@@ -46,7 +46,6 @@ export class RibbonGroup {
 
         for (let i=0; i<this.ribbons.length; i++) {
             this.ribbons[i]?.update({
-                twist: (t: number) => 0,
                 width: (t: number) =>  .4 + .2 * Math.sin(10 * time + t * 20),
                 height: (t: number) => .25 + .05 * (1 + Math.cos(10 * time + t * 20)),
                 r1: (t: number) => 6,

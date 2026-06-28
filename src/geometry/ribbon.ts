@@ -37,8 +37,7 @@ export class Ribbon {
         return this.group;
     }
 
-    update({twist, width, height, r1, r2, phi, theta}:{
-        twist: (t: number) => number,
+    update({width, height, r1, r2, phi, theta}:{
         width: (t: number) => number,
         height: (t: number) => number,
         r1: (t: number) => number,
@@ -49,7 +48,6 @@ export class Ribbon {
         for (let tick=0; tick<this.numTicks; tick++){
             const t = tick / this.numTicks;
             this.updateTick(tick, {
-                twist: twist(t),
                 width: width(t),
                 height: height(t),
                 r1: r1(t),
@@ -64,8 +62,7 @@ export class Ribbon {
         });
     }
 
-    private updateTick(tick: number, {twist, width, height, r1, r2, phi, theta}:{
-        twist: number,
+    private updateTick(tick: number, {width, height, r1, r2, phi, theta}:{
         width: number,
         height: number,
         r1: number,
