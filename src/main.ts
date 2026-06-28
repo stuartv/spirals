@@ -102,13 +102,14 @@ let lastTime = timer.getElapsed();
 
 function animate(time: number) {
     timer.update();
-    const totalTime = timer.getElapsed();
-    const timeStep = timer.getElapsed() - lastTime;
-    lastTime = totalTime;
+
+    const curTime = timer.getElapsed();
+    const timeStepDuration = curTime - lastTime;
+    lastTime = curTime;
 
     ribbonGroup.animate({
-        time: totalTime,
-        timeStepDuration: timeStep
+        time: curTime,
+        timeStepDuration
     });
 
     composer.render();
