@@ -29,7 +29,7 @@ const base: RibbonAnimationSettings = {
     width: ({}) => .4,
     height: ({}) => .25,
     r1: ({}) => 6,
-    r2: ({}) => 2.5,
+    r2: ({t}) => 2.5 - (.35 * t * 2 * Math.PI),
     phi: ({t, i}) => t * 4 * 2 * Math.PI + (i * Math.PI / 2),
     theta: ({t}) => t * 2 * Math.PI * 1.5
 };
