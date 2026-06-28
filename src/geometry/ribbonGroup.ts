@@ -3,13 +3,13 @@ import { RibbonFaceMaterial } from '../shaderMaterials/ribbonFaceMaterial';
 import { RibbonEdgeMaterial } from '../shaderMaterials/ribbonEdgeMaterial';
 import { Ribbon } from './ribbon';
 
-type AnimationInput = {
+export type AnimationInput = {
     t: number;
     i: number;
     time: number;
 };
 
-type RibbonParams = {
+export type RibbonParams = {
     width: number;
     height: number;
     r1: number;
@@ -18,7 +18,7 @@ type RibbonParams = {
     theta: number;
 }
 
-type AnimationSetting<InParams, OutParams> = {
+export type AnimationSetting<InParams, OutParams> = {
     [K in keyof OutParams]: (input: InParams) => OutParams[K]
 }
 

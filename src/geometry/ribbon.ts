@@ -3,6 +3,19 @@ import { QuadStrip } from './quadStrip';
 import { RibbonFaceMaterial } from '../shaderMaterials/ribbonFaceMaterial';
 import { RibbonEdgeMaterial } from '../shaderMaterials/ribbonEdgeMaterial';
 
+export type RibbonParams = {
+    width: number;
+    height: number;
+    r1: number;
+    r2: number;
+    phi: number;
+    theta: number;
+};
+
+type RibbonInput = {
+    [K in keyof RibbonParams]: (t: number) => RibbonParams[K]
+}
+
 export class Ribbon {
     private numTicks: number;
     private group: THREE.Group;
@@ -37,14 +50,7 @@ export class Ribbon {
         return this.group;
     }
 
-    update({width, height, r1, r2, phi, theta}:{
-        width: (t: number) => number,
-        height: (t: number) => number,
-        r1: (t: number) => number,
-        r2: (t: number) => number,
-        phi: (t: number) => number,
-        theta: (t: number) => number
-    }): void {
+    update({width, height, r1, r2, phi, theta}: RibbonInput): void {
         for (let tick=0; tick<this.numTicks; tick++){
             const t = tick / this.numTicks;
             this.updateTick(tick, {
@@ -62,14 +68,10 @@ export class Ribbon {
         });
     }
 
-    private updateTick(tick: number, {width, height, r1, r2, phi, theta}:{
-        width: number,
-        height: number,
-        r1: number,
-        r2: number,
-        phi: number,
-        theta: number
-    }): void {
+    private updateTick(
+        tick: number,
+        {width, height, r1, r2, phi, theta}: RibbonParams
+    ): void {
         const w = width / 2;
         const h = height / 2;
         const points: THREE.Vector3[] = [
@@ -88,7 +90,6 @@ export class Ribbon {
                     ...points[(i + 1) % numStrips]!.toArray()],
                     2 * elementSize * tick);
             
-            // TOOD: Modulo logic breaks when numStrips != 4
             this.quadStrips[i]?.getNormals()
                 .set([
                     ...points[(i + 0) % numStrips]!.clone().sub(
