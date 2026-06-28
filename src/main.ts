@@ -42,9 +42,6 @@ const pencilLinesPass = new PencilLinesPass({
 });
 
 composer.addPass(renderPass);
-// renderer.domElement.addEventListener("click", function(){
-//     console.log("Clicked");
-// });
 
 new InputInterface(renderer.domElement);
 
@@ -72,22 +69,6 @@ camera
 
 scene.add(camera);
 
-// scene.add(new THREE.Mesh(
-//     new THREE.TorusGeometry( 5, 2, 16, 100 ),
-//     wideStripMaterial
-// ));
-
-// scene.add(new THREE.Mesh(
-//     new THREE.SphereGeometry(5),
-//     wideStripMaterial
-// ));
-
-// scene.add(new THREE.Mesh(
-//     new THREE.TorusGeometry( 5, 2, 16, 100 ),
-//     new THREE.MeshLambertMaterial({
-//         color: new THREE.Color(0,1,0)})));
-
-
 const pointLight = new THREE.PointLight(
     new THREE.Color(255, 255, 255),
     1, 100, 2);
@@ -95,7 +76,6 @@ pointLight.position.set(10, 10, 10);
 scene.add(pointLight);
 
 camera.position.set(0, 0, 15);
-
 
 const timer = new THREE.Timer();
 timer.connect(document);
