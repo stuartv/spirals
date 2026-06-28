@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { RibbonFaceMaterial } from '../shaderMaterials/ribbonFaceMaterial';
 import { RibbonEdgeMaterial } from '../shaderMaterials/ribbonEdgeMaterial';
-import { Ribbon } from './ribbon';
+import { Ribbon, type RibbonParams } from './ribbon';
 
 export type AnimationInput = {
     t: number;
@@ -9,26 +9,8 @@ export type AnimationInput = {
     time: number;
 };
 
-export type RibbonParams = {
-    width: number;
-    height: number;
-    r1: number;
-    r2: number;
-    phi: number;
-    theta: number;
-}
-
 export type AnimationSetting<InParams, OutParams> = {
     [K in keyof OutParams]: (input: InParams) => OutParams[K]
-}
-
-const mySetting: AnimationSetting<AnimationInput, RibbonParams> = {
-    width: ({t, time}) =>  .4 + .2 * Math.sin(10 * time + t * 20),
-    height: ({t, time}) => .25 + .05 * (1 + Math.cos(10 * time + t * 20)),
-    r1: ({}) => 6,
-    r2: ({t}) => 2.5 - (.35 * t * 2 * Math.PI),
-    phi: ({t, i}) => t * 4 * 2 * Math.PI + (i * Math.PI / 2),
-    theta: ({t}) => t * 2 * Math.PI * 1.5
 }
 
 export class RibbonGroup {
@@ -64,9 +46,10 @@ export class RibbonGroup {
         return this.group;
     }
 
-    animate({time, timeStepDuration}: {
+    animate({time, timeStepDuration, animationSettings}: {
         time: number,
-        timeStepDuration: number
+        timeStepDuration: number,
+        animationSettings: AnimationSetting<AnimationInput, RibbonParams>
     }) {
         const rotationScale = .5;
         const stepRotation = timeStepDuration * rotationScale;
@@ -74,12 +57,12 @@ export class RibbonGroup {
 
         for (let i=0; i<this.ribbons.length; i++) {
             this.ribbons[i]?.update({
-                width: (t: number) =>  .4 + .2 * Math.sin(10 * time + t * 20),
-                height: (t: number) => .25 + .05 * (1 + Math.cos(10 * time + t * 20)),
-                r1: (t: number) => 6,
-                r2: (t: number) => 2.5 - (.35 * t * 2 * Math.PI),
-                phi: (t: number) => t * 4 * 2 * Math.PI + (i * Math.PI / 2),
-                theta: (t: number) => t * 2 * Math.PI * 1.5
+                width: (t: number) => animationSettings.width({t, i, time}),
+                height: (t: number) => animationSettings.height({t, i, time}),
+                r1: (t: number) => animationSettings.r1({t, i, time}),
+                r2: (t: number) => animationSettings.r2({t, i, time}),
+                phi: (t: number) => animationSettings.phi({t, i, time}),
+                theta: (t: number) => animationSettings.theta({t, i, time}),
             });
         }
         

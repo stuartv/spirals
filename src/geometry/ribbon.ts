@@ -12,7 +12,7 @@ export type RibbonParams = {
     theta: number;
 };
 
-type RibbonInput = {
+export type RibbonInput = {
     [K in keyof RibbonParams]: (t: number) => RibbonParams[K]
 }
 
@@ -53,6 +53,7 @@ export class Ribbon {
     update({width, height, r1, r2, phi, theta}: RibbonInput): void {
         for (let tick=0; tick<this.numTicks; tick++){
             const t = tick / this.numTicks;
+
             this.updateTick(tick, {
                 width: width(t),
                 height: height(t),

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { EffectComposer, RenderPass } from 'three/examples/jsm/Addons.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-import { RibbonGroup } from './geometry/ribbonGroup';
+import { RibbonGroup, type AnimationInput, type AnimationSetting } from './geometry/ribbonGroup';
 import { BackgroundMaterial } from './shaderMaterials/backgroundMaterial';
 import myCustomNoise from './shaders/chunks/myCustomNoise.glsl?raw';
 // @ts-expect-error
@@ -13,6 +13,7 @@ import { InputInterface } from './inputInterface';
 import { PencilLinesPass } from './passes/pencilLinesPass';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
+import type { RibbonParams } from './geometry/ribbon';
 
 const size = new THREE.Vector2(
     window.innerWidth,
@@ -100,6 +101,15 @@ const timer = new THREE.Timer();
 timer.connect(document);
 let lastTime = timer.getElapsed();
 
+const mySetting: AnimationSetting<AnimationInput, RibbonParams> = {
+    width: ({t, time}) =>  .4 + .2 * Math.sin(10 * time + t * 20),
+    height: ({t, time}) => .25 + .05 * (1 + Math.cos(10 * time + t * 20)),
+    r1: ({}) => 6,
+    r2: ({t}) => 2.5 - (.35 * t * 2 * Math.PI),
+    phi: ({t, i}) => t * 4 * 2 * Math.PI + (i * Math.PI / 2),
+    theta: ({t}) => t * 2 * Math.PI * 1.5
+}
+
 function animate(time: number) {
     timer.update();
 
@@ -109,7 +119,8 @@ function animate(time: number) {
 
     ribbonGroup.animate({
         time: curTime,
-        timeStepDuration
+        timeStepDuration,
+        animationSettings: mySetting
     });
 
     composer.render();
