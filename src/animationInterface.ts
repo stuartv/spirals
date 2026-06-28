@@ -5,6 +5,7 @@ type RibbonAnimationSettings = AnimationSetting<AnimationInput, RibbonParams>;
 
 type AnimationPreset = {
     duration: number;
+    easingDuration: number;
     settings: RibbonAnimationSettings;
 };
 
@@ -15,6 +16,7 @@ type ActiveAnimation = {
 
 const pulse: AnimationPreset = {
     duration: 3,
+    easingDuration: .3,
     settings: {
         width: ({t, time}) => .2 * Math.sin(10 * time + t * 20),
         height: ({t, time}) => .05 * (1 + Math.cos(10 * time + t * 20)),
@@ -22,6 +24,19 @@ const pulse: AnimationPreset = {
         r2: ({t}) => 0,
         phi: ({t, i}) => 0,
         theta: ({t}) => 0
+    }
+}
+
+const uncurl: AnimationPreset = {
+    duration: 6,
+    easingDuration: 3,
+    settings: {
+        width: ({}) => 0,
+        height: ({}) => 0,
+        r1: ({}) => 0,
+        r2: ({t}) => 0,
+        phi: ({t, i}) => 6 * t,
+        theta: ({t}) => - 20 * t
     }
 }
 
@@ -37,10 +52,16 @@ const base: RibbonAnimationSettings = {
 export class AnimationInterface {
     private activePresets: ActiveAnimation[] = [];
 
+    private options: AnimationPreset[] = [pulse, uncurl];
+
     add(curTime: number): void {
+        const chosen = this.options[
+            Math.floor(Math.random() * this.options.length)
+        ]!;
+
         this.activePresets.push({
             startTime: curTime,
-            preset: pulse
+            preset: chosen
         });
     }
 
@@ -50,16 +71,36 @@ export class AnimationInterface {
             animation.startTime + animation.preset.duration > curTime);
 
         return this.activePresets
-            .map(preset => preset.preset.settings)
-            .reduce((combined, preset) => {
+            .reduce((combined, activePreset) => {
+                
+                const preset = activePreset.preset.settings;
+                const curDuration = curTime - activePreset.startTime;
+                const e = this.getEasingFactor(activePreset, curDuration);
+                
                 return {
-                    width: (input) => combined.width(input) + preset.width(input),
-                    height: (input) => combined.height(input) + preset.height(input),
-                    r1: (input) => combined.r1(input) + preset.r1(input),
-                    r2: (input) => combined.r2(input) + preset.r2(input),
-                    phi: (input) => combined.phi(input) + preset.phi(input),
-                    theta: (input) => combined.theta(input) + preset.theta(input)
+                    width: (input) => combined.width(input) + e * preset.width(input),
+                    height: (input) => combined.height(input) + e * preset.height(input),
+                    r1: (input) => combined.r1(input) + e * preset.r1(input),
+                    r2: (input) => combined.r2(input) + e * preset.r2(input),
+                    phi: (input) => combined.phi(input) + e * preset.phi(input),
+                    theta: (input) => combined.theta(input) + e * preset.theta({...input, time: curDuration})
                 };
             },base);
+    }
+
+    private getEasingFactor(activePreset: ActiveAnimation, curDuration: number): number {        
+        const maxDuration = activePreset.preset.duration;
+
+        if (curDuration < activePreset.preset.easingDuration){
+            return this.easeInOutQuad((curDuration) / activePreset.preset.easingDuration);
+        } else if (maxDuration - curDuration < activePreset.preset.easingDuration) {
+            return this.easeInOutQuad((maxDuration - curDuration) / activePreset.preset.easingDuration);
+        } else {
+            return 1;
+        }
+    }
+
+    private easeInOutQuad(x: number): number {
+        return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
     }
 }
