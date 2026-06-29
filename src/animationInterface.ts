@@ -14,6 +14,71 @@ type ActiveAnimation = {
     preset: AnimationPreset;
 }
 
+const pierce: AnimationPreset = {
+    duration: 8,
+    easingDuration: 4,
+    settings: {
+        width: () => 0,
+        height: () => 0,
+        r1: () => 0,
+        r2: () => 0,
+        phi: () => 0,
+        theta: ({t}) => -20 * t
+    }
+}
+
+const insideOut: AnimationPreset = {
+    duration: 8,
+    easingDuration: 4,
+    settings: {
+        width: () => 0,
+        height: () => 0,
+        r1: () => -12,
+        r2: () => 0,
+        phi: () => 0,
+        theta: () => 0,
+    }
+}
+
+const unwind: AnimationPreset = {
+    duration: 8,
+    easingDuration: 4,
+    settings: {
+        width: () => 0,
+        height: () => 0,
+        r1: () => 0,
+        r2: () => 0,
+        phi: ({t}) => -t * 8 * Math.PI,
+        theta: () => 0
+    }
+}
+
+const buldge: AnimationPreset = {
+    duration: 2,
+    easingDuration: .3,
+    settings: {
+        width: () => 0,
+        height: () => 0,
+        r1: () => 0,
+        r2: ({t, time}) =>  Math.max(0 , -.3 + Math.sin(10 * (t + time))),
+        phi: () => 0,
+        theta: () => 0
+    }
+}
+
+const gather: AnimationPreset = {
+    duration: 3,
+    easingDuration: 1.5,
+    settings: {
+        width: ({t, time}) => 0,
+        height: ({t, time}) => 0,
+        r1: ({}) => 0,
+        r2: ({t}) => 0,
+        phi: ({t, i}) => -.7 * (i * Math.PI / 2),
+        theta: ({t}) => 0
+    }
+}
+
 const pulse: AnimationPreset = {
     duration: 3,
     easingDuration: .3,
@@ -24,19 +89,6 @@ const pulse: AnimationPreset = {
         r2: ({t}) => 0,
         phi: ({t, i}) => 0,
         theta: ({t}) => 0
-    }
-}
-
-const uncurl: AnimationPreset = {
-    duration: 6,
-    easingDuration: 3,
-    settings: {
-        width: ({}) => 0,
-        height: ({}) => 0,
-        r1: ({}) => 0,
-        r2: ({t}) => 0,
-        phi: ({t, i}) => 6 * t,
-        theta: ({t}) => - 20 * t
     }
 }
 
@@ -52,7 +104,7 @@ const base: RibbonAnimationSettings = {
 export class AnimationInterface {
     private activePresets: ActiveAnimation[] = [];
 
-    private options: AnimationPreset[] = [pulse, uncurl];
+    private options: AnimationPreset[] = [pierce, insideOut, unwind, buldge, gather, pulse];
 
     add(curTime: number): void {
         const chosen = this.options[
