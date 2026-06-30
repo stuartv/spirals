@@ -32,7 +32,6 @@ export class Ribbon {
 
         const numQuadStripsInRibbon = 4;
 
-        // TODO: Am I reusing the quadStrip reference or creating a new one?
         for (let quadIdx=0; quadIdx<numQuadStripsInRibbon; quadIdx++){
             const quadStrip = new QuadStrip(numTicks);
 
@@ -54,8 +53,13 @@ export class Ribbon {
         for (let tick=0; tick<this.numTicks; tick++){
             const t = tick / this.numTicks;
 
+            const limit = .01;
+            const cappedWidth = t < limit
+                ? Math.sqrt(1 - Math.pow((t/limit) - 1, 2)) * width(limit)
+                : width(t);
+
             this.updateTick(tick, {
-                width: width(t),
+                width: cappedWidth,
                 height: height(t),
                 r1: r1(t),
                 r2: r2(t),
@@ -73,9 +77,9 @@ export class Ribbon {
         tick: number,
         {width, height, r1, r2, phi, theta}: RibbonParams
     ): void {
-
         const w = width / 2;
         const h = height / 2;
+
         const points: THREE.Vector3[] = [
             this.toroidalToCartesian({r1, r2: r2 - w, phi, theta: theta + h}),
             this.toroidalToCartesian({r1, r2: r2 + w, phi, theta: theta + h}),

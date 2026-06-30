@@ -67,7 +67,7 @@ const ribbonGroup: RibbonGroup = new RibbonGroup({
     numRibbons: 4,
     numTicks: 1000});
 scene.add(ribbonGroup.getMesh());
-ribbonGroup.getMesh().rotateX(-.8);
+ribbonGroup.getMesh().rotateX(-1);
 
 camera
     .add(new THREE.Mesh(

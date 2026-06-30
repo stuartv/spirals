@@ -65,12 +65,12 @@ const pulse: AnimationPreset = {
 }
 
 const base: RibbonAnimationSettings = {  
-    width: ({}) => .4,
-    height: ({}) => .25,
-    r1: ({}) => 6,
-    r2: ({t}) => 2.5 - (.35 * t * 2 * Math.PI),
-    phi: ({t, i}) => t * 4 * 2 * Math.PI + (i * Math.PI / 2),
-    theta: ({t}) => t * 2 * Math.PI * 1.5
+    width: () => .4,
+    height: () => .25,
+    r1: () => 6,
+    r2: ({t}) => 2.5 * (1 - t),
+    phi: ({t, i}) => t * 8 * Math.PI + (i * Math.PI / 2),
+    theta: ({t}) => t * 2 * Math.PI * 1.3
 };
 
 function build(input: SparseRibbonAnimationSettings): RibbonAnimationSettings {
@@ -140,15 +140,17 @@ export class AnimationInterface {
         const maxDuration = activePreset.preset.duration;
 
         if (curDuration < activePreset.preset.easingDuration){
-            return this.easeInOutQuad((curDuration) / activePreset.preset.easingDuration);
+            return easeInOutQuad((curDuration) / activePreset.preset.easingDuration);
         } else if (maxDuration - curDuration < activePreset.preset.easingDuration) {
-            return this.easeInOutQuad((maxDuration - curDuration) / activePreset.preset.easingDuration);
+            return easeInOutQuad((maxDuration - curDuration) / activePreset.preset.easingDuration);
         } else {
             return 1;
         }
     }
 
-    private easeInOutQuad(x: number): number {
-        return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
-    }
+    
+}
+
+function easeInOutQuad(x: number): number {
+    return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
 }
