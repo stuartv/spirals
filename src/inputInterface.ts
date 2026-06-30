@@ -26,11 +26,11 @@ export class InputInterface {
         this.keyPressEvents[key] = event;
     }
 
-    private down(e: MouseEvent | TouchEvent) {
+    private down(e: PointerEvent) {
         this.start = this.getInputPoint(e);
     };
 
-    private up(e: MouseEvent | TouchEvent) {
+    private up(e: PointerEvent) {
         const end = this.getInputPoint(e);
         const amountMoved =
             Math.abs(end.x - this.start.x) +
@@ -46,33 +46,20 @@ export class InputInterface {
     }
 
     private createEventTranslations() {
-        this.activeCanvas.addEventListener("mousedown",
-            (e: MouseEvent) => this.down(e));
-
-        this.activeCanvas.addEventListener("touchstart",
-            (e: TouchEvent) => this.down(e));
+        this.activeCanvas.addEventListener("pointerdown",
+            (e: PointerEvent) => this.down(e));
             
-        this.activeCanvas.addEventListener("mouseup",
-            (e: MouseEvent) => this.up(e));
-
-        this.activeCanvas.addEventListener("touchend",
-            (e: TouchEvent) => this.up(e));
+        this.activeCanvas.addEventListener("pointerup",
+            (e: PointerEvent) => this.up(e));
 
         document.addEventListener("keydown",
             (e: KeyboardEvent) => this.keyPressed(e.key));
     }
 
-    private getInputPoint(e: MouseEvent | TouchEvent): Point {
-        let mouseX = (e as TouchEvent).changedTouches ?
-            (e as TouchEvent).changedTouches[0]?.pageX :
-            (e as MouseEvent).pageX;
-        let mouseY = (e as TouchEvent).changedTouches ?
-            (e as TouchEvent).changedTouches[0]?.pageY :
-            (e as MouseEvent).pageY;
-
+    private getInputPoint(e: PointerEvent): Point {
         return {
-            x: mouseX ?? 0,
-            y: mouseY ?? 0
+            x: e.pageX,
+            y: e.pageY
         };
     }
 }
