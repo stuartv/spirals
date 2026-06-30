@@ -14,26 +14,13 @@ import { AnimationInterface } from './animationInterface';
 
 import { PencilLinesPass } from './passes/pencilLinesPass';
 
+const canvas = document.getElementById('spirals') as HTMLCanvasElement;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 const size = new THREE.Vector2(
-    window.innerWidth,
-    window.innerHeight
+    canvas.width,
+    canvas.height
 );
-
-function setSize({camera, renderer}: {
-    camera: THREE.PerspectiveCamera,
-    renderer: THREE.WebGLRenderer
-}){
-    const size = new THREE.Vector2(
-        window.innerWidth,
-        window.innerHeight
-    );
-    camera.aspect = size.x / size.y;
-
-    renderer.domElement.width = size.x;
-    renderer.domElement.height = size.y;
-    renderer.setSize(size.x, size.y);
-    renderer.setPixelRatio(window.devicePixelRatio);
-}
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
@@ -42,9 +29,9 @@ const camera = new THREE.PerspectiveCamera(
     0.1,
     100);
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({canvas});
+
 renderer.setSize(size.x, size.y);
-document.body.appendChild( renderer.domElement );
 const controls = new OrbitControls( camera, renderer.domElement );
 
 const composer = new EffectComposer(renderer);

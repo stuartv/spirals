@@ -70,7 +70,7 @@ const base: RibbonAnimationSettings = {
     r1: () => 6,
     r2: ({t}) => 2.5 * (1 - t),
     phi: ({t, i}) => t * 8 * Math.PI + (i * Math.PI / 2),
-    theta: ({t}) => t * 2 * Math.PI * 1.3
+    theta: ({t}) => t * 2 * Math.PI * 1.3 + Math.PI
 };
 
 function build(input: SparseRibbonAnimationSettings): RibbonAnimationSettings {

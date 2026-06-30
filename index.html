@@ -5,10 +5,25 @@
         <title>MC Escher's Spirals</title>
         <style>
             body { margin: 0; }
+
+            #spirals {
+                position: absolute;
+                width: 100vw;
+                height: 100vh;
+            }
+
+            #mce {
+                position: absolute;
+                bottom: 12%;
+                right: 12%;
+            }
         </style>
     </head>
     <body>
-        <img src="/src/MCE.png"/>
+        <canvas id="spirals"></canvas>
+        <a href="https://www.digitalcommonwealth.org/search/commonwealth:3r076s45q">
+            <img id="mce" src="/src/MCE.png"/>
+        </a>
         <script type="module" src="/src/main.js"></script>
     </body>
 </html>
