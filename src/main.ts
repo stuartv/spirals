@@ -2,24 +2,38 @@ import * as THREE from 'three';
 import { EffectComposer, RenderPass } from 'three/examples/jsm/Addons.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-import { RibbonGroup, type AnimationInput, type AnimationSetting } from './geometry/ribbonGroup';
+import { RibbonGroup } from './geometry/ribbonGroup';
 import { BackgroundMaterial } from './shaderMaterials/backgroundMaterial';
+
 import myCustomNoise from './shaders/chunks/myCustomNoise.glsl?raw';
 // @ts-expect-error
 THREE.ShaderChunk['myCustomNoise'] = myCustomNoise;
 
 import { InputInterface } from './inputInterface';
+import { AnimationInterface } from './animationInterface';
 
 import { PencilLinesPass } from './passes/pencilLinesPass';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
-import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
-import type { RibbonParams } from './geometry/ribbon';
-import { AnimationInterface } from './animationInterface';
 
 const size = new THREE.Vector2(
     window.innerWidth,
     window.innerHeight
 );
+
+function setSize({camera, renderer}: {
+    camera: THREE.PerspectiveCamera,
+    renderer: THREE.WebGLRenderer
+}){
+    const size = new THREE.Vector2(
+        window.innerWidth,
+        window.innerHeight
+    );
+    camera.aspect = size.x / size.y;
+
+    renderer.domElement.width = size.x;
+    renderer.domElement.height = size.y;
+    renderer.setSize(size.x, size.y);
+    renderer.setPixelRatio(window.devicePixelRatio);
+}
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
@@ -45,13 +59,6 @@ const pencilLinesPass = new PencilLinesPass({
 composer.addPass(renderPass);
 
 const inputInterface = new InputInterface(renderer.domElement);
-
-
-// Setup and add FXAA (Anti-alising)
-// const fxaaPass = new ShaderPass(FXAAShader);
-// fxaaPass.uniforms['resolution'].value.x = 1 / (size.x * renderer.getPixelRatio());
-// fxaaPass.uniforms['resolution'].value.y = 1 / (size.y * renderer.getPixelRatio());
-// composer.addPass(fxaaPass);
 
 composer.addPass(pencilLinesPass);
 
@@ -84,15 +91,15 @@ let lastTime = timer.getElapsed();
 
 const animationInterface = new AnimationInterface();
 inputInterface.registerClickEvent(() => animationInterface.add(timer.getElapsed()));
-
-const mySetting: AnimationSetting<AnimationInput, RibbonParams> = {
-    width: ({t, time}) =>  .4 + .2 * Math.sin(10 * time + t * 20),
-    height: ({t, time}) => .25 + .05 * (1 + Math.cos(10 * time + t * 20)),
-    r1: ({}) => 6,
-    r2: ({t}) => 2.5 - (.35 * t * 2 * Math.PI),
-    phi: ({t, i}) => t * 4 * 2 * Math.PI + (i * Math.PI / 2),
-    theta: ({t}) => t * 2 * Math.PI * 1.5
+for(let i=0; i<animationInterface.getTotalPresets(); i++) {
+  inputInterface.registerKeyPress(String(i),
+  () => animationInterface.addSpecific(i-1, timer.getElapsed()));
 }
+
+// window.addEventListener("resize", () => {
+//     console.log("setting size");
+//     setSize({camera, renderer});
+// });
 
 function animate(time: number) {
     timer.update();

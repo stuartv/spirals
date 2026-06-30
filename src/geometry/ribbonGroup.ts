@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { RibbonFaceMaterial } from '../shaderMaterials/ribbonFaceMaterial';
 import { RibbonEdgeMaterial } from '../shaderMaterials/ribbonEdgeMaterial';
-import { Ribbon, type RibbonParams } from './ribbon';
+import { Ribbon } from './ribbon';
+import { type RibbonAnimationSettings } from '../animationInterface'
 
 export type AnimationInput = {
     t: number;
@@ -49,7 +50,7 @@ export class RibbonGroup {
     animate({time, timeStepDuration, animationSettings}: {
         time: number,
         timeStepDuration: number,
-        animationSettings: AnimationSetting<AnimationInput, RibbonParams>
+        animationSettings: RibbonAnimationSettings
     }) {
         const rotationScale = .5;
         const stepRotation = timeStepDuration * rotationScale;

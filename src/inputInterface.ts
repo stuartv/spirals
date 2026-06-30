@@ -6,9 +6,9 @@ type Point = {
 export type HandlerFunction = (arg: Point) => void;
 
 export class InputInterface {
-    private clickEvent: () => void = () => {
-        console.log("no click event assigned");
-    };
+    private clickEvent: () => void = () => {};
+
+    private keyPressEvents: Record<string, () => void> = {};
 
     private activeCanvas: HTMLCanvasElement;
     private start: Point = {x:0, y:0};
@@ -20,6 +20,10 @@ export class InputInterface {
 
     registerClickEvent(event: () => void) {
         this.clickEvent = event;
+    }
+
+    registerKeyPress(key: string, event: () => void) {
+        this.keyPressEvents[key] = event;
     }
 
     private down(e: MouseEvent | TouchEvent) {
@@ -34,10 +38,12 @@ export class InputInterface {
 
         if (amountMoved < 10) {
             this.clickEvent();
-        } else {
-            console.log('what a drag');
         }
     };
+
+    private keyPressed(key: string) {
+        this.keyPressEvents[key]?.();
+    }
 
     private createEventTranslations() {
         this.activeCanvas.addEventListener("mousedown",
@@ -51,6 +57,9 @@ export class InputInterface {
 
         this.activeCanvas.addEventListener("touchend",
             (e: TouchEvent) => this.up(e));
+
+        document.addEventListener("keydown",
+            (e: KeyboardEvent) => this.keyPressed(e.key));
     }
 
     private getInputPoint(e: MouseEvent | TouchEvent): Point {

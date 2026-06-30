@@ -1,7 +1,8 @@
 import type { RibbonParams } from './geometry/ribbon';
 import {type AnimationInput, type AnimationSetting } from './geometry/ribbonGroup';
 
-type RibbonAnimationSettings = AnimationSetting<AnimationInput, RibbonParams>;
+export type RibbonAnimationSettings = AnimationSetting<AnimationInput, RibbonParams>;
+type SparseRibbonAnimationSettings = AnimationSetting<AnimationInput, Partial<RibbonParams>>;
 
 type AnimationPreset = {
     duration: number;
@@ -17,79 +18,50 @@ type ActiveAnimation = {
 const pierce: AnimationPreset = {
     duration: 8,
     easingDuration: 4,
-    settings: {
-        width: () => 0,
-        height: () => 0,
-        r1: () => 0,
-        r2: () => 0,
-        phi: () => 0,
+    settings: build({
         theta: ({t}) => -20 * t
-    }
+    })
 }
 
 const insideOut: AnimationPreset = {
-    duration: 8,
-    easingDuration: 4,
-    settings: {
-        width: () => 0,
-        height: () => 0,
-        r1: () => -12,
-        r2: () => 0,
-        phi: () => 0,
-        theta: () => 0,
-    }
+    duration: 4,
+    easingDuration: 2,
+    settings: build({
+        r1: ({t, time}) => .5 * Math.sin(10 * (3*t + time))
+    })
 }
 
-const unwind: AnimationPreset = {
-    duration: 8,
-    easingDuration: 4,
-    settings: {
-        width: () => 0,
-        height: () => 0,
-        r1: () => 0,
-        r2: () => 0,
-        phi: ({t}) => -t * 8 * Math.PI,
-        theta: () => 0
-    }
+const wind: AnimationPreset = {
+    duration: 4,
+    easingDuration: 2,
+    settings: build({
+        phi: ({t}) => 30 * t
+    })
 }
 
 const buldge: AnimationPreset = {
     duration: 2,
     easingDuration: .3,
-    settings: {
-        width: () => 0,
-        height: () => 0,
-        r1: () => 0,
-        r2: ({t, time}) =>  Math.max(0 , -.3 + Math.sin(10 * (t + time))),
-        phi: () => 0,
-        theta: () => 0
-    }
+    settings: build({
+        r2: ({t, time}) =>  Math.max(0 , -.3 + Math.sin(10 * (t + time)))
+    })
 }
 
 const gather: AnimationPreset = {
     duration: 3,
     easingDuration: 1.5,
-    settings: {
-        width: ({t, time}) => 0,
-        height: ({t, time}) => 0,
-        r1: ({}) => 0,
-        r2: ({t}) => 0,
-        phi: ({t, i}) => -.7 * (i * Math.PI / 2),
-        theta: ({t}) => 0
-    }
+    settings: build({
+        phi: ({i}) => -.7 * (i * Math.PI / 2)
+    })
 }
 
 const pulse: AnimationPreset = {
     duration: 3,
     easingDuration: .3,
-    settings: {
+    settings: build({
         width: ({t, time}) => .2 * Math.sin(10 * time + t * 20),
-        height: ({t, time}) => .05 * (1 + Math.cos(10 * time + t * 20)),
-        r1: ({}) => 0,
-        r2: ({t}) => 0,
-        phi: ({t, i}) => 0,
-        theta: ({t}) => 0
-    }
+        height: ({t, time}) => .05 * (1 + Math.cos(10 * time + t * 20))
+    })
 }
 
 const base: RibbonAnimationSettings = {  
@@ -101,10 +73,34 @@ const base: RibbonAnimationSettings = {
     theta: ({t}) => t * 2 * Math.PI * 1.5
 };
 
+function build(input: SparseRibbonAnimationSettings): RibbonAnimationSettings {
+    const defaultFunction = () => 0;
+    return {
+        width: (input.width as RibbonAnimationSettings['width']) ?? defaultFunction,
+        height: (input.height as RibbonAnimationSettings['height']) ?? defaultFunction,
+        r1: (input.r1 as RibbonAnimationSettings['r1']) ?? defaultFunction,
+        r2: (input.r2 as RibbonAnimationSettings['r2']) ?? defaultFunction,
+        phi: (input.phi as RibbonAnimationSettings['phi']) ?? defaultFunction,
+        theta: (input.theta as RibbonAnimationSettings['theta']) ?? defaultFunction,
+    };
+}
+
 export class AnimationInterface {
     private activePresets: ActiveAnimation[] = [];
+    private options: AnimationPreset[] = [pierce, insideOut, wind, buldge, gather, pulse];
 
-    private options: AnimationPreset[] = [pierce, insideOut, unwind, buldge, gather, pulse];
+    getTotalPresets(): number {
+        return this.options.length;
+    }
+
+    addSpecific(key: number, curTime: number): void {
+        const chosen = this.options[key]!;
+
+        this.activePresets.push({
+            startTime: curTime,
+            preset: chosen
+        });
+    }
 
     add(curTime: number): void {
         const chosen = this.options[

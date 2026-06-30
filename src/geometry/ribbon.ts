@@ -73,6 +73,7 @@ export class Ribbon {
         tick: number,
         {width, height, r1, r2, phi, theta}: RibbonParams
     ): void {
+
         const w = width / 2;
         const h = height / 2;
         const points: THREE.Vector3[] = [
