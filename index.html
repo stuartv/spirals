@@ -13,11 +13,38 @@
                 height: 100vh;
             }
 
+            .container {
+                display: grid;
+                place-items: center;
+                width: 100vw;
+                height: 100vh;
+            }
+
+            .container ul {
+                list-style-type: none
+            }
+
+            #intro {
+                position: absolute;
+                display: grid;
+                place-items: center;
+                width: 100vw;
+                height: 100vh;
+                background-color: rgba(0, 0, 0, 0.5);
+                color: #ffffff;
+            }
+
             #mce {
                 position: absolute;
                 bottom: 12%;
                 right: 12%;
                 height: 28px;
+                animation: fadeIn 3s infinite alternate ease-in-out;    
+            }
+
+            @keyframes fadeIn {
+                from { opacity: .2; }
+                to { opacity: .8; }
             }
 
             @media (max-width: 1320px) {
@@ -25,13 +52,72 @@
                     height: 14px;
                 }
             }
+
+            .emoji {
+                display: inline-block;
+            }
+            
+            .emoji-poke {
+                animation: bounce 0.6s infinite alternate ease-in-out;
+            }
+
+            @keyframes bounce {
+                from { transform: translateX(0); }
+                to { transform: translateX(-10px); }
+            }
+
+            .emoji-pinch {
+                animation: pinch 0.6s infinite alternate ease-in-out;
+            }
+
+            @keyframes pinch {
+                from { transform: scaleY(1); }
+                to { transform: scaleY(.5); }
+            }
+
+            .swipe-container {
+                height: 2em; 
+                animation: swipe 0.6s infinite alternate ease-in-out;
+            }
+
+            @keyframes swipe {
+                from { transform: translateY(0px); }
+                to { transform: translateY(10px); }
+            }
+
+            .swipe-bullet div{
+                display: inline-block;
+            }
         </style>
     </head>
     <body>
-        <canvas id="spirals"></canvas>
-        <a href="https://www.digitalcommonwealth.org/search/commonwealth:3r076s45q">
-            <img id="mce" src="/src/MCE.png"/>
-        </a>
+        <div class="container">
+            <canvas id="spirals"></canvas>
+            <a href="https://www.nga.gov/artworks/54257-spirals">
+                <img id="mce" src="src/MCE.png"/>
+            </a>
+            <div id="intro">
+                <div class="elements">
+                    <h1>Touch the art!</h1>
+                    <ul>
+                        <li><span class="emoji emoji-poke">👉</span> Poke it</li>
+                        <li><span class="emoji emoji-pinch">🤏</span> Pinch it</li>
+                        <li class="swipe-bullet">
+                            <div class="swipe-container">
+                                <span class="emoji emoji-swipe">👋</span>
+                            </div>
+                            <span>Swipe it</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.getElementById('intro').addEventListener(
+                'pointerdown',
+                () => { document.getElementById('intro').style.display = 'none'; }
+            );
+        </script>
         <script type="module" src="/src/main.js"></script>
     </body>
 </html>
