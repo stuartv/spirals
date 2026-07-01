@@ -88,6 +88,12 @@
             .swipe-bullet div{
                 display: inline-block;
             }
+
+            .credit {
+                position: absolute;
+                bottom: 1em;
+                color: white;
+            }
         </style>
     </head>
     <body>
@@ -110,12 +116,18 @@
                         </li>
                     </ul>
                 </div>
+                <a class="credit" href="https://github.com/stuartv/spirals">Stuart VandenBrink</a>
             </div>
         </div>
         <script>
             document.getElementById('intro').addEventListener(
                 'pointerdown',
-                () => { document.getElementById('intro').style.display = 'none'; }
+                (e) => {
+                    console.log(e);
+                    if (!e.srcElement.classList.contains('credit')) {
+                        document.getElementById('intro').style.display = 'none';
+                    }
+                }
             );
         </script>
         <script type="module" src="/src/main.js"></script>
